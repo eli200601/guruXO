@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Guru</string>
-
+    <string name="app_name">Guru XO</string>
+    <string name="main_screen_title">Guru XO - Main lobby</string>
     /* Login Activity text */
     <string name="desc_firebase_lockup">Firebase logo and name</string>
     <string name="emailpassword_title_text">Email and Password</string>
