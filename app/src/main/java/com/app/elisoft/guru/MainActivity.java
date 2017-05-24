@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
-            //To Delete!!!
+            //ToDO: Delete!!!
             Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
             this.startActivity(myIntent);
             this.finish();

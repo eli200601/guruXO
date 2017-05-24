@@ -215,7 +215,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
+                            Log.e(TAG, "send Email Verification", task.getException());
                             Toast.makeText(getApplicationContext(), "Failed to send verification email.", Toast.LENGTH_SHORT).show();
                         }
                         // [END_EXCLUDE]
