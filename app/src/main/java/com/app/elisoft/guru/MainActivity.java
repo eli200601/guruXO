@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        
+
     }
 
     @Override
@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
+            //To Delete!!!
+            Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            this.startActivity(myIntent);
+            this.finish();
             } else {
             // User is signed out
             Log.d(TAG, "onAuthStateChanged:signed_out");
