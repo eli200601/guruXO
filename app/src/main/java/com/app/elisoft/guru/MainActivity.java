@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             this.startActivity(myIntent);
             this.finish();
             } else {
-            // User is signed out
+            // User is signed out from FireBase
             Log.d(TAG, "onAuthStateChanged:signed_out");
             Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
             this.startActivity(myIntent);
