@@ -1,7 +1,9 @@
 package com.app.elisoft.guru.Table;
 
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private String uid;
     private String email;

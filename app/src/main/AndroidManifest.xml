@@ -25,7 +25,11 @@
             android:name=".Activity.LoginActivity"
             android:label="Login to Guru"
             />
-
+        <activity
+            android:name=".Dialogs.InviteDialog"
+            android:label="Invite Player"
+            android:theme="@style/AppTheme.Transparent"
+            />
         <receiver android:name=".BroadcastReceiver.AlarmReceiver">
             <intent-filter>
                 <action

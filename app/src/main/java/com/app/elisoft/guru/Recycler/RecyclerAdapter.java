@@ -2,12 +2,15 @@ package com.app.elisoft.guru.Recycler;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.app.elisoft.guru.Dialogs.InviteDialog;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
 
@@ -61,6 +64,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
             public void onDataItemClick(View view, int position) {
                 //When Clicking on item in list
                 Log.d(TAG, "Item in Recycler clicked: " + String.valueOf(position));
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("User", usersList.get(position));
+                Intent dialogActivity = new Intent(context, InviteDialog.class);
+                dialogActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                dialogActivity.putExtra("bundleUser", bundle);
+                context.startActivity(dialogActivity);
+
+
             }
         });
 
