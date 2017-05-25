@@ -1,17 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/single_item"
+    android:background="@color/colorWhite">
 
-        <TextView
+        <ImageView
+            android:id="@+id/user_profile_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_margin="10dp"
-            android:text="User name"
-            android:textSize="20dp"
-            />
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            app:srcCompat="@mipmap/profile_icon" />
 
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/user_profile_icon"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="User name"
+            android:textSize="18dp"
+            android:textColor="@color/colorPrimaryText"
+             />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_below="@id/user_profile_icon"
+            android:background="@color/colorDivider"/>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true">
+                <ImageView
+                    android:id="@+id/user_online"
+                    android:layout_centerInParent="true"
+                    android:layout_width="@dimen/online_indication"
+                    android:layout_height="@dimen/online_indication"
+                    android:src="@mipmap/online_indication"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/last_seen_text"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3h"
+                    android:textColor="@color/colorSecondaryText"/>
+        </RelativeLayout>
 
 
 

@@ -60,6 +60,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
     }
 
     @Override

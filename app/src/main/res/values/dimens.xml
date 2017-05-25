@@ -6,4 +6,6 @@
     <dimen name="title_bottom_margin">16dp</dimen>
     <dimen name="field_width_standard">160dp</dimen>
 
+    <dimen name="online_indication">20dp</dimen>
+
 </resources>

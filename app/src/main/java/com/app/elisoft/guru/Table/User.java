@@ -8,6 +8,8 @@ public class User {
     private String password;
     private long lastLogin;
 
+    public User(){}
+
     public User(String uid, String email, String password, long lastLogin) {
         this.uid = uid;
         this.email = email;
