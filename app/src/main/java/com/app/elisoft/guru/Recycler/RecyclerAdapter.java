@@ -58,13 +58,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
             holder.lastLogin.setVisibility(View.VISIBLE);
             holder.onlineIndication.setVisibility(View.INVISIBLE);
         }
-        holder.userName.setText(userName);
+        holder.userName.setText(userName.split("@")[0]);
 
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onDataItemClick(View view, int position) {
                 //When Clicking on item in list
                 Log.d(TAG, "Item in Recycler clicked: " + String.valueOf(position));
+
                 Bundle bundle = new Bundle();
 
                 bundle.putSerializable("UserClient", usersList.get(position));

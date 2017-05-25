@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
 
+import java.util.UUID;
+
 public class InviteDialog extends AppCompatActivity {
 
     static final String TAG = "InviteDialog";
@@ -29,6 +31,9 @@ public class InviteDialog extends AppCompatActivity {
 
         Log.d(TAG, "Host!!! " + host_user.getEmail());
         Log.d(TAG, client_user.getEmail());
+
+//        String uniqueId = UUID.randomUUID().toString();
+//        Log.d(TAG, "uuid: " + uniqueId);
 
         TextView clientName = (TextView) findViewById(R.id.other_player_name);
         Button cancel = (Button) findViewById(R.id.cancel_invite_dialog);
