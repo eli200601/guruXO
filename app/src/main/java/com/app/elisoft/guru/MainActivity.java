@@ -166,12 +166,17 @@ public class MainActivity extends BaseActivity {
         logoutButton.setOnClickListener(listenerLogout);
 
         //Init the Recycler ToDo: hare!!!k
-        mAdapter = new RecyclerAdapter(getApplicationContext(), usersList);
+        mAdapter = new RecyclerAdapter(getApplicationContext(), usersList, getUserFromDB(currentUser));
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
 
         mDatabase.child("users").addValueEventListener(valueEventListener);
+    }
+
+    private User getUserFromDB(FirebaseUser firebaseUser) {
+        User user = new User(firebaseUser.getUid(),firebaseUser.getEmail(), "", 0);
+        return user;
     }
 
 

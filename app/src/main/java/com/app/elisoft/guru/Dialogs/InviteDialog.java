@@ -24,8 +24,10 @@ public class InviteDialog extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleUser");
-        User client_user = (User) bundle.getSerializable("User");
+        User client_user = (User) bundle.getSerializable("UserClient");
+        User host_user = (User) bundle.getSerializable("UserHost");
 
+        Log.d(TAG, "Host!!! " + host_user.getEmail());
         Log.d(TAG, client_user.getEmail());
 
         TextView clientName = (TextView) findViewById(R.id.other_player_name);

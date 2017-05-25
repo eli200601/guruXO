@@ -22,10 +22,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
 
     private Context context;
     private ArrayList<User> usersList;
+    private User hostUser;
 
-    public RecyclerAdapter(Context context, ArrayList<User> usersList) {
+    public RecyclerAdapter(Context context, ArrayList<User> usersList, User host) {
         this.context = context;
         this.usersList = usersList;
+        this.hostUser = host;
     }
 
     @Override
@@ -46,7 +48,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
         long lastPing = user.getLastLogin();
         String lastStatus;
 
-
         lastStatus = setLastOnlineStatus(lastPing);
         if (lastStatus.equals("ONLINE")) {
             holder.lastLogin.setVisibility(View.INVISIBLE);
@@ -65,13 +66,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
                 //When Clicking on item in list
                 Log.d(TAG, "Item in Recycler clicked: " + String.valueOf(position));
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("User", usersList.get(position));
+
+                bundle.putSerializable("UserClient", usersList.get(position));
+                bundle.putSerializable("UserHost", hostUser);
                 Intent dialogActivity = new Intent(context, InviteDialog.class);
                 dialogActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 dialogActivity.putExtra("bundleUser", bundle);
+
                 context.startActivity(dialogActivity);
-
-
             }
         });
 
