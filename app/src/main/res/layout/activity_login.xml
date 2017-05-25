@@ -112,7 +112,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:visibility="gone"
-            android:weightSum="2.0">
+            android:weightSum="3.0">
 
             <Button
                 android:id="@+id/sign_out_button"
@@ -127,8 +127,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
+                android:maxLines="1"
                 android:text="@string/verify_email"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+            <Button
+                android:id="@+id/lobby_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="Lobby"
+                android:theme="@style/ThemeOverlay.MyDarkButton"
+
+                />
 
         </LinearLayout>
 

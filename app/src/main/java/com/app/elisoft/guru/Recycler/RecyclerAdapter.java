@@ -46,11 +46,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
 
         lastStatus = setLastOnlineStatus(lastPing);
         if (lastStatus.equals("ONLINE")) {
+            holder.lastLogin.setVisibility(View.INVISIBLE);
             holder.onlineIndication.setVisibility(View.VISIBLE);
         }
         else {
             holder.lastLogin.setText(lastStatus);
             holder.lastLogin.setVisibility(View.VISIBLE);
+            holder.onlineIndication.setVisibility(View.INVISIBLE);
         }
         holder.userName.setText(userName);
 

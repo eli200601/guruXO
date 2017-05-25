@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.elisoft.guru.Activity.BaseActivity;
@@ -34,6 +37,8 @@ public class MainActivity extends BaseActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
+    private FirebaseUser currentUser;
+
 
     private Intent alarmIntent;
     private PendingIntent pendingIntent;
@@ -43,6 +48,10 @@ public class MainActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
 
     private ArrayList<User> usersList;
+
+    private TextView userNameTitle;
+    private ImageView logoutButton;
+    private ImageView refresh_button;
 
 
     @Override
@@ -82,11 +91,58 @@ public class MainActivity extends BaseActivity {
 //        System.out.println(phoneNumbers.toString());
 //    }
 
+    private View.OnClickListener listenerLogout = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            launchLoginActivity();
+        }
+    };
+
+    private View.OnClickListener listenerRefresh = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(getApplicationContext(), "Refreshing", Toast.LENGTH_SHORT).show();
+            mDatabase.child("users").addListenerForSingleValueEvent(valueEventListener);
+        }
+    };
+
+    private ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                if (usersList.size() < snapshot.getChildrenCount()) {
+            hideProgressDialog();
+            usersList.clear();
+
+            Log.d(TAG ,""+dataSnapshot.getChildrenCount());
+            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+                User post = postSnapshot.getValue(User.class);
+
+                Log.d(TAG, post.getEmail());
+                if (!currentUser.getUid().equals(post.getUid())) {
+                    usersList.add(post);
+                }
+
+            }
+            sortApplicationList();
+            Log.d(TAG, "User list size is: "+ String.valueOf(usersList.size()));
+            mAdapter.setItems(usersList);
+            mAdapter.notifyDataSetChanged();
+//                }
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
@@ -97,6 +153,17 @@ public class MainActivity extends BaseActivity {
             Log.d(TAG, "onAuthStateChanged:signed_out");
             launchLoginActivity();
         }
+        //Setting up the user name title
+        userNameTitle = (TextView) findViewById(R.id.user_name_title);
+        String name = "hi, " + currentUser.getEmail().split("@")[0];
+        userNameTitle.setText(name);
+
+        //Setting up the logout button
+        logoutButton = (ImageView) findViewById(R.id.logout_button);
+        refresh_button = (ImageView) findViewById(R.id.refresh_button);
+
+        refresh_button.setOnClickListener(listenerRefresh);
+        logoutButton.setOnClickListener(listenerLogout);
 
         //Init the Recycler ToDo: hare!!!k
         mAdapter = new RecyclerAdapter(getApplicationContext(), usersList);
@@ -104,38 +171,8 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
 
-        mDatabase.child("users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (usersList.size() < snapshot.getChildrenCount()) {
-                    hideProgressDialog();
-                    usersList.clear();
-
-                    Log.d(TAG ,""+snapshot.getChildrenCount());
-                    for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                        User post = postSnapshot.getValue(User.class);
-                        Log.d(TAG, post.getEmail());
-                        usersList.add(post);
-
-                    }
-                    sortApplicationList();
-                    Log.d(TAG, "User list size is: "+ String.valueOf(usersList.size()));
-                    mAdapter.setItems(usersList);
-                    mAdapter.notifyDataSetChanged();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-        });
-
+        mDatabase.child("users").addValueEventListener(valueEventListener);
     }
-
-
 
 
     @Override
@@ -147,7 +184,7 @@ public class MainActivity extends BaseActivity {
         }
         else {
             startUpdateUserStatus();
-
+            mDatabase.child("users").addListenerForSingleValueEvent(valueEventListener);
         }
     }
 
@@ -173,7 +210,7 @@ public class MainActivity extends BaseActivity {
         int interval = 1000*60;
         Log.d(TAG, "startUpdateUserStatus() - Starting To update user status");
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval , pendingIntent);
-        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
     public void stopUpdateUserStatus() {

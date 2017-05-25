@@ -57,6 +57,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         findViewById(R.id.email_create_account_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.verify_email_button).setOnClickListener(this);
+        findViewById(R.id.lobby_button).setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -99,6 +100,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             }
             case R.id.verify_email_button: {
                 sendEmailVerification();
+                break;
+            }
+            case R.id.lobby_button: {
+                launchLobby();
                 break;
             }
         }
