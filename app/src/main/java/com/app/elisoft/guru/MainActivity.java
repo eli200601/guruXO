@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity {
         // Init The Update user login Intent
         alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1001, alarmIntent, 0);
-        manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
 
 
         usersList = new ArrayList<>();
@@ -240,6 +240,7 @@ public class MainActivity extends BaseActivity {
     public void startUpdateUserStatus() {
         int interval = 1000*60;
         Log.d(TAG, "startUpdateUserStatus() - Starting To update user status");
+        manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval , pendingIntent);
 //        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }

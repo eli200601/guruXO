@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -74,10 +75,16 @@ public class SendMessageToDevice  extends IntentService {
 
             byte[] outputBytes = root.toString().getBytes("UTF-8");
             OutputStream os = connection.getOutputStream();
+            Log.d(TAG, "Request send: " + os.toString());
             os.write(outputBytes);
             os.flush();
             os.close();
             connection.getInputStream(); //do not remove this line. request will not work without it gg
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Log.d(TAG, "Successfully send");
+            } else {
+                Log.d(TAG, "request not send, error: " + String.valueOf(connection.getResponseCode()));
+            }
 
         }
         catch (MalformedURLException e) {
