@@ -16,7 +16,6 @@
             android:theme="@style/AppTheme.NoTitleHeader">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -25,21 +24,42 @@
             android:name=".Activity.LoginActivity"
             android:label="Login to Guru"
             />
+
         <activity
-            android:name=".Dialogs.InviteDialog"
+            android:name="com.app.elisoft.guru.Dialogs.InviteDialog"
             android:label="Invite Player"
             android:theme="@style/AppTheme.Transparent"
             />
-        <receiver android:name=".BroadcastReceiver.AlarmReceiver">
+
+        <service
+            android:name="com.app.elisoft.guru.Services.UpdateUserState"
+            android:label="Intent"
+            android:exported="false"
+            android:enabled="true"/>
+
+        <service
+            android:name="com.app.elisoft.guru.Services.SendMessageToDevice"
+            android:exported="false"
+            android:label="Intent"
+            android:enabled="true"/>
+
+        <service
+            android:name="com.app.elisoft.guru.Services.FBMessagingReceiverService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".BroadcastReceiver.AlarmReceiver"
+            android:exported="false">
             <intent-filter>
                 <action
                     android:name="com.app.elisoft.guru.START_ALARM"
                     android:exported="true" />
             </intent-filter>
         </receiver>
-        <service
-            android:name=".Services.UpdateUserState"
-            android:exported="false" />
+
+
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,10 +26,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 
 public class MainActivity extends BaseActivity {
 
@@ -152,7 +156,12 @@ public class MainActivity extends BaseActivity {
             // User is signed out from FireBase
             Log.d(TAG, "onAuthStateChanged:signed_out");
             launchLoginActivity();
+            return;
         }
+        String username = currentUser.getUid();
+        FirebaseMessaging.getInstance().subscribeToTopic("user_" + username);
+
+        mDatabase.child("users").addValueEventListener(valueEventListener);
         //Setting up the user name title
         userNameTitle = (TextView) findViewById(R.id.user_name_title);
         String name = "hi, " + currentUser.getEmail().split("@")[0];
@@ -171,13 +180,15 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
 
-        mDatabase.child("users").addValueEventListener(valueEventListener);
+
     }
 
     private User getUserFromDB(FirebaseUser firebaseUser) {
         User user = new User(firebaseUser.getUid(),firebaseUser.getEmail(), "", 0);
         return user;
     }
+
+
 
 
     @Override
@@ -189,7 +200,7 @@ public class MainActivity extends BaseActivity {
         }
         else {
             startUpdateUserStatus();
-            mDatabase.child("users").addListenerForSingleValueEvent(valueEventListener);
+//            mDatabase.child("users").addListenerForSingleValueEvent(valueEventListener);
         }
     }
 
@@ -197,6 +208,9 @@ public class MainActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         stopUpdateUserStatus();
+
+        String username = currentUser.getUid();
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("user_" + username);
     }
 
     @Override

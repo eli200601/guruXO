@@ -75,7 +75,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
 
                 dialogActivity.putExtra("bundleUser", bundle);
 
-                context.startActivity(dialogActivity);
+                view.getContext().startActivity(dialogActivity);
             }
         });
 
