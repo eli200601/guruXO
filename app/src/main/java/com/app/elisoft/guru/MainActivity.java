@@ -3,8 +3,10 @@ package com.app.elisoft.guru;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.app.elisoft.guru.Activity.BaseActivity;
 import com.app.elisoft.guru.Activity.LoginActivity;
 import com.app.elisoft.guru.BroadcastReceiver.AlarmReceiver;
+import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.Recycler.RecyclerAdapter;
 import com.app.elisoft.guru.Table.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +31,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +50,7 @@ public class MainActivity extends BaseActivity {
     private DatabaseReference mDatabase;
     private FirebaseUser currentUser;
 
+    private EventBus eventBus = EventBus.getDefault();
 
     private Intent alarmIntent;
     private PendingIntent pendingIntent;
@@ -158,8 +166,7 @@ public class MainActivity extends BaseActivity {
             launchLoginActivity();
             return;
         }
-        String username = currentUser.getUid();
-        FirebaseMessaging.getInstance().subscribeToTopic("user_" + username);
+
 
         mDatabase.child("users").addValueEventListener(valueEventListener);
         //Setting up the user name title
@@ -202,6 +209,9 @@ public class MainActivity extends BaseActivity {
             startUpdateUserStatus();
 //            mDatabase.child("users").addListenerForSingleValueEvent(valueEventListener);
         }
+        String username = currentUser.getUid();
+        FirebaseMessaging.getInstance().subscribeToTopic("user_" + username);
+        eventBus.register(this);
     }
 
     @Override
@@ -211,6 +221,8 @@ public class MainActivity extends BaseActivity {
 
         String username = currentUser.getUid();
         FirebaseMessaging.getInstance().unsubscribeFromTopic("user_" + username);
+        Log.d(TAG, "Unregister ");
+        eventBus.unregister(this);
     }
 
     @Override
@@ -263,5 +275,24 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessageEvent messageEvent) {
+        if (messageEvent instanceof MessageEvent.OnInviteToPlay) {
+            String hostName = ((MessageEvent.OnInviteToPlay) messageEvent).getHostName();
+            String host_id = ((MessageEvent.OnInviteToPlay) messageEvent).getHost_id();
+            Log.d(TAG, "I am invited by :) " + hostName);
 
+
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("Invited!");
+            alertDialog.setMessage("You been invited by " + hostName);
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
 }

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -64,8 +65,10 @@ public class SendMessageToDevice  extends IntentService {
 
             JSONObject root = new JSONObject();
             JSONObject data = new JSONObject();
+
             data.put("host_name", host_name);
-            data.put(KEY_FCM_SENDER_ID, sender);
+            data.put(KEY_FCM_SENDER_ID, sender);//"host_id"
+
             root.put("data", data);
             root.put("to", "/topics/user_" + receiverId);
 
@@ -76,24 +79,20 @@ public class SendMessageToDevice  extends IntentService {
             os.close();
             connection.getInputStream(); //do not remove this line. request will not work without it gg
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
         }
-//        catch (ProtocolException e) {
-//            e.printStackTrace();
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
         finally {
             if (connection != null) connection.disconnect();
         }
-
+        stopService();
     }
 
     public SendMessageToDevice() {
