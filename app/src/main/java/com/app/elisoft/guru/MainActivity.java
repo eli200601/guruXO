@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,7 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,7 +37,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Map;
 
 public class MainActivity extends BaseActivity {
 
@@ -217,7 +214,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        stopUpdateUserStatus();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            stopUpdateUserStatus();
+        }
 
         String username = currentUser.getUid();
         FirebaseMessaging.getInstance().unsubscribeFromTopic("user_" + username);
@@ -231,7 +231,10 @@ public class MainActivity extends BaseActivity {
     }
 
     private void launchLoginActivity(){
-        stopUpdateUserStatus();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            stopUpdateUserStatus();
+        }
         Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
         this.startActivity(myIntent);
         this.finish();
