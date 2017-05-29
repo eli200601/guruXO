@@ -10,26 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.app.elisoft.guru.BroadcastReceiver.AlarmReceiver;
-import com.app.elisoft.guru.MainActivity;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.util.UUID;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class InviteDialog extends AppCompatActivity {
 
@@ -45,11 +29,6 @@ public class InviteDialog extends AppCompatActivity {
 
 
         auth = FirebaseAuth.getInstance();
-//        FirebaseUser currentUser = auth.getCurrentUser() ;
-//        if (currentUser !=  null) {
-//            FirebaseMessaging.getInstance().subscribeToTopic("user_" + currentUser.getUid());
-//        }
-
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleUser");

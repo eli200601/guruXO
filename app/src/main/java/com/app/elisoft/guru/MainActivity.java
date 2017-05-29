@@ -3,10 +3,8 @@ package com.app.elisoft.guru;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +16,7 @@ import android.widget.Toast;
 import com.app.elisoft.guru.Activity.BaseActivity;
 import com.app.elisoft.guru.Activity.LoginActivity;
 import com.app.elisoft.guru.BroadcastReceiver.AlarmReceiver;
+import com.app.elisoft.guru.Dialogs.GotInviteDialog;
 import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.Recycler.RecyclerAdapter;
 import com.app.elisoft.guru.Table.User;
@@ -46,6 +45,7 @@ public class MainActivity extends BaseActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
     private FirebaseUser currentUser;
+    private User currentUserLocal;
 
     private EventBus eventBus = EventBus.getDefault();
 
@@ -156,6 +156,7 @@ public class MainActivity extends BaseActivity {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
             startUpdateUserStatus();
+            currentUserLocal = new User(currentUser.getUid(),currentUser.getEmail(),"", 0);
 
             } else {
             // User is signed out from FireBase
@@ -279,6 +280,15 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    public User getUserFromUID(String uid) {
+        for (User user: usersList) {
+            if (uid.equals(user.getUid())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MessageEvent messageEvent) {
         if (messageEvent instanceof MessageEvent.OnInviteToPlay) {
@@ -286,17 +296,30 @@ public class MainActivity extends BaseActivity {
             String host_id = ((MessageEvent.OnInviteToPlay) messageEvent).getHost_id();
             Log.d(TAG, "I am invited by :) " + hostName);
 
+            User hostUser = getUserFromUID(host_id);
+            Log.d(TAG, "From Users class, host is: " + hostUser.getEmail());
 
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("Invited!");
-            alertDialog.setMessage("You been invited by " + hostName);
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("UserClient", currentUserLocal);
+            bundle.putSerializable("UserHost", hostUser);
+
+            Intent gotInviteActivity = new Intent(this, GotInviteDialog.class);
+
+            gotInviteActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            gotInviteActivity.putExtra("bundleGotInvite", bundle);
+            startActivity(gotInviteActivity);
+
+//            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+//            alertDialog.setTitle("Invited!");
+//            alertDialog.setMessage("You been invited by " + hostName);
+//            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+//                    new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    });
+//            alertDialog.show();
         }
     }
 }

@@ -31,6 +31,12 @@
             android:theme="@style/AppTheme.Transparent"
             />
 
+        <activity
+            android:name="com.app.elisoft.guru.Dialogs.GotInviteDialog"
+            android:label="Invited Player"
+            android:theme="@style/AppTheme.Transparent"
+            />
+
         <service
             android:name="com.app.elisoft.guru.Services.UpdateUserState"
             android:label="Intent"
