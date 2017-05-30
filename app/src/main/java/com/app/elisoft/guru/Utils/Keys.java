@@ -12,4 +12,5 @@ public class Keys {
 
     public static final String REQUEST_TYPE = "request_type";
     public static final String REQUEST_TYPE_INVITE = "invite";
+    public static final String REQUEST_TYPE_RESPONCE_TO_INVITE = "response_invite";
 }

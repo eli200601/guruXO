@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.app.elisoft.guru.R;
+import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.GameRoom;
 import com.app.elisoft.guru.Table.User;
+import com.app.elisoft.guru.Utils.Keys;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -53,7 +55,17 @@ public class GotInviteDialog extends AppCompatActivity {
             public void onClick(View view) {
                 openGameRoom();
 
+                Intent intentNew = new Intent(GotInviteDialog.this, SendMessageToDevice.class);
+                intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
+                intentNew.putExtra("host_uid", host_user.getUid());
+                intentNew.putExtra("address_prefix", "room_");
+                intentNew.putExtra("client_uid", game_room);
+                intentNew.putExtra("game_room", game_room);
+                intentNew.putExtra("request_type", Keys.REQUEST_TYPE_RESPONCE_TO_INVITE);
+                intentNew.putExtra("message", "Lets Play");
 
+                intentNew.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                startService(intentNew);
             }
         });
 

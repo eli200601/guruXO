@@ -13,7 +13,9 @@ import android.widget.TextView;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.User;
+import com.app.elisoft.guru.Utils.Keys;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.UUID;
 
@@ -23,6 +25,7 @@ public class InviteDialog extends AppCompatActivity {
     private FirebaseAuth auth;
     private String FCM_API_KEY = "AAAAK_9HT5E:APA91bHdVCtHBj8p6ovE8kGQmTWZdrLSE6b9WGH58Cio-GXI7umvkfGe8B4nG4v3At2a486iV_vUh65pOMMIr87K876QyTWKZZ2ZodZCpHBqqAvDTyO2Ux-oDJtvjA2lxNipfP87_6Mr";
     User host_user, client_user;
+    String game_room;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +44,18 @@ public class InviteDialog extends AppCompatActivity {
         Log.d(TAG, "client_user!!! " + client_user.getEmail());
 
         // Generating optional game room
-        String uniqueId = UUID.randomUUID().toString();
-        Log.d(TAG, "uuid: " + uniqueId);
+        game_room = UUID.randomUUID().toString();
+        Log.d(TAG, "uuid: " + game_room);
 
 
         Intent intentNew = new Intent(InviteDialog.this, SendMessageToDevice.class);
         intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
         intentNew.putExtra("host_uid", host_user.getUid());
+        intentNew.putExtra("address_prefix", "user_");
         intentNew.putExtra("client_uid", client_user.getUid());
-        intentNew.putExtra("game_room", uniqueId);
-        intentNew.putExtra("request_type", "invite");
+        intentNew.putExtra("game_room", game_room);
+        intentNew.putExtra("request_type", Keys.REQUEST_TYPE_INVITE);
+
 
 
         intentNew.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -80,9 +85,15 @@ public class InviteDialog extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseMessaging.getInstance().subscribeToTopic("room_" + game_room);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("room_" + game_room);
     }
 
 }
