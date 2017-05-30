@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity {
             hideProgressDialog();
             usersList.clear();
 
-            Log.d(TAG ,""+dataSnapshot.getChildrenCount());
+            Log.d(TAG ,"" + dataSnapshot.getChildrenCount());
             for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
 
                 User post = postSnapshot.getValue(User.class);
@@ -293,16 +293,20 @@ public class MainActivity extends BaseActivity {
     public void onEvent(MessageEvent messageEvent) {
         if (messageEvent instanceof MessageEvent.OnInviteToPlay) {
             String hostName = ((MessageEvent.OnInviteToPlay) messageEvent).getHostName();
-            String host_id = ((MessageEvent.OnInviteToPlay) messageEvent).getHost_id();
+            String host_id = ((MessageEvent.OnInviteToPlay) messageEvent).getHostId();
+            String game_room = ((MessageEvent.OnInviteToPlay) messageEvent).getGameRoom();
+
             Log.d(TAG, "I am invited by :) " + hostName);
 
             User hostUser = getUserFromUID(host_id);
             Log.d(TAG, "From Users class, host is: " + hostUser.getEmail());
+            Log.d(TAG, "Game room = " + game_room);
 
             Bundle bundle = new Bundle();
 
             bundle.putSerializable("UserClient", currentUserLocal);
             bundle.putSerializable("UserHost", hostUser);
+            bundle.putString("game_room", game_room);
 
             Intent gotInviteActivity = new Intent(this, GotInviteDialog.class);
 

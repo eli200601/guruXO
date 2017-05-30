@@ -15,6 +15,8 @@ import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.User;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.UUID;
+
 public class InviteDialog extends AppCompatActivity {
 
     static final String TAG = "InviteDialog";
@@ -38,12 +40,18 @@ public class InviteDialog extends AppCompatActivity {
         Log.d(TAG, "Host!!! " + host_user.getEmail());
         Log.d(TAG, "client_user!!! " + client_user.getEmail());
 
-//        String uniqueId = UUID.randomUUID().toString();
-//        Log.d(TAG, "uuid: " + uniqueId);
+        // Generating optional game room
+        String uniqueId = UUID.randomUUID().toString();
+        Log.d(TAG, "uuid: " + uniqueId);
+
+
         Intent intentNew = new Intent(InviteDialog.this, SendMessageToDevice.class);
         intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
         intentNew.putExtra("host_uid", host_user.getUid());
         intentNew.putExtra("client_uid", client_user.getUid());
+        intentNew.putExtra("game_room", uniqueId);
+        intentNew.putExtra("request_type", "invite");
+
 
         intentNew.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         startService(intentNew);
@@ -75,10 +83,6 @@ public class InviteDialog extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-//        FirebaseUser currentUser = auth.getCurrentUser() ;
-//        if (currentUser !=  null) {
-//            FirebaseMessaging.getInstance().unsubscribeFromTopic("user_" + currentUser);
-//        }
     }
 
 }

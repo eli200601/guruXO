@@ -23,13 +23,15 @@ public class FBMessagingReceiverService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             Map date = remoteMessage.getData();
 
+            if ()
             MessageEvent.OnInviteToPlay event = null;
 
 
             String host_id = date.get("host_id").toString();
             String host_name = date.get("host_name").toString();
+            String game_room = date.get("game_room").toString();
 
-            event = new MessageEvent.OnInviteToPlay(host_name,host_id);
+            event = new MessageEvent.OnInviteToPlay(host_name,host_id, game_room);
             bus.post(event);
         }
     }

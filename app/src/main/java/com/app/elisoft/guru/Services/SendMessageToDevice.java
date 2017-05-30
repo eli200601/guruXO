@@ -3,7 +3,8 @@ package com.app.elisoft.guru.Services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.TextView;
+
+import com.app.elisoft.guru.Utils.Keys;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -29,13 +29,15 @@ public class SendMessageToDevice  extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "SendMessageToDevice - onHandleIntent");
 
-        String host_name, host_uid, client_uid;
+        String host_name, host_uid, client_uid, game_room, request_type;
         host_name = intent.getStringExtra("host_name");
         host_uid = intent.getStringExtra("host_uid");
         client_uid = intent.getStringExtra("client_uid");
-
-        Log.d(TAG, "Message: " + host_name + host_uid + client_uid);
-        sendMessage(host_name, host_uid, client_uid);
+        game_room = intent.getStringExtra("game_room");
+        request_type = intent.getStringExtra("request_type");
+        //TODO: i am here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Log.d(TAG, "Message: " + host_name + host_uid + client_uid + request_type);
+        sendMessage(host_name, host_uid, client_uid, game_room, request_type);
 
     }
 
@@ -44,7 +46,7 @@ public class SendMessageToDevice  extends IntentService {
         this.stopSelf();
     }
 
-    private void sendMessage(String host_name, String senderId, String receiverId) {
+    private void sendMessage(String host_name, String senderId, String receiverId, String game_room, String request_type) {
         //send Push Notification
         Log.d(TAG, "Starting to sendMessage");
 
@@ -69,6 +71,8 @@ public class SendMessageToDevice  extends IntentService {
 
             data.put("host_name", host_name);
             data.put(KEY_FCM_SENDER_ID, sender);//"host_id"
+            data.put("game_room", game_room);
+            data.put(Keys.REQUEST_TYPE, request_type);
 
             root.put("data", data);
             root.put("to", "/topics/user_" + receiverId);

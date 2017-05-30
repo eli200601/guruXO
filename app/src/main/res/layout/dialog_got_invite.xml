@@ -36,7 +36,7 @@
             android:textColor="@color/colorSecondaryText"/>
 
         <Button
-            android:id="@+id/except_invite_dialog"
+            android:id="@+id/accept_invite_dialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/cancel_invite_dialog"

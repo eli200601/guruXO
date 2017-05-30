@@ -10,5 +10,6 @@ public class Keys {
     public static final String PREF_NAME = "Guru";
     public static final String PREF_ACTIVATE = "Activate";
 
-
+    public static final String REQUEST_TYPE = "request_type";
+    public static final String REQUEST_TYPE_INVITE = "invite";
 }
