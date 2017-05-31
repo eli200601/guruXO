@@ -9,6 +9,7 @@ import com.app.elisoft.guru.MainActivity;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
  * Created by EliranA on 5/31/2017.
@@ -39,6 +40,18 @@ public class GameActivity extends AppCompatActivity {
         host.setText(host_user.getEmail());
         client.setText(client_user.getEmail());
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseMessaging.getInstance().subscribeToTopic("room_" + game_room);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("room_" + game_room);
     }
 
 
