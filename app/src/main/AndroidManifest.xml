@@ -37,6 +37,12 @@
             android:theme="@style/AppTheme.Transparent"
             />
 
+        <activity
+            android:name="com.app.elisoft.guru.Activity.GameActivity"
+            android:label="Game Room"
+            android:theme="@style/AppTheme.NoTitleHeader"
+            />
+
         <service
             android:name="com.app.elisoft.guru.Services.UpdateUserState"
             android:label="Intent"

@@ -35,12 +35,16 @@ public class FBMessagingReceiverService extends FirebaseMessagingService {
 
                 event = new MessageEvent.OnInviteToPlay(host_name, host_id, game_room);
                 bus.post(event);
+                //Catch on Main Activity
 
-            } else if (date.get(Keys.REQUEST_TYPE).equals(Keys.REQUEST_TYPE_RESPONCE_TO_INVITE)) {
+            } else if (date.get(Keys.REQUEST_TYPE).equals(Keys.REQUEST_TYPE_RESPONSE_TO_INVITE)) {
                 // response for Invitation
                 Log.d(TAG, "This is response invite received message");
                 if (date.get("message") != null) {
                     Log.d(TAG, "The client accepted your offer!!!");
+                    MessageEvent.OnAcceptInvite event;
+                    event = new MessageEvent.OnAcceptInvite(date.get("message").toString());
+                    bus.post(event);
                 }
             }
         }

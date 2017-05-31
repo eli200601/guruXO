@@ -23,5 +23,15 @@ public class MessageEvent {
         }
     }
 
+    public static class OnAcceptInvite extends MessageEvent {
+        String message;
+        public OnAcceptInvite(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+
 
 }

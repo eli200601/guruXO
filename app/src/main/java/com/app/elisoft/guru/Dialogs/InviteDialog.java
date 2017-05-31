@@ -10,12 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.app.elisoft.guru.Activity.GameActivity;
+import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Services.SendMessageToDevice;
+import com.app.elisoft.guru.Table.GameRoom;
 import com.app.elisoft.guru.Table.User;
 import com.app.elisoft.guru.Utils.Keys;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.UUID;
 
@@ -27,12 +36,19 @@ public class InviteDialog extends AppCompatActivity {
     User host_user, client_user;
     String game_room;
 
+    private DatabaseReference mDatabase;
+
+    private EventBus eventBus = EventBus.getDefault();
+
+
+    TextView title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_invite);
 
-
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
@@ -47,6 +63,7 @@ public class InviteDialog extends AppCompatActivity {
         game_room = UUID.randomUUID().toString();
         Log.d(TAG, "uuid: " + game_room);
 
+        title = (TextView) findViewById(R.id.title_invite);
 
         Intent intentNew = new Intent(InviteDialog.this, SendMessageToDevice.class);
         intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
@@ -88,12 +105,53 @@ public class InviteDialog extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         FirebaseMessaging.getInstance().subscribeToTopic("room_" + game_room);
+        eventBus.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         FirebaseMessaging.getInstance().unsubscribeFromTopic("room_" + game_room);
+        eventBus.unregister(this);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessageEvent messageEvent) {
+        if (messageEvent instanceof MessageEvent.OnAcceptInvite) {
+            String response = ((MessageEvent.OnAcceptInvite) messageEvent).getMessage();
+            Log.d(TAG, "GotInviteDialog catch OnAcceptInvite - " + response);
+            if (response.equals(Keys.RESPONSE_AGREE)) {
+                // need to open new screen
+                title.setText("Challenge accepted :)");
+                startGame();
+            }else {
+                //            removeGameRoom();
+                title.setText("He is chicken - decline");
+                //Need to delete game room
+                //Need to prompt the user about decline!
+            }
+
+        }
+    }
+
+    public void startGame(){
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable("UserClient", client_user);
+        bundle.putSerializable("UserHost", host_user);
+        bundle.putString("game_room", game_room);
+
+        Intent startGame = new Intent(this, GameActivity.class);
+
+        startGame.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startGame.putExtra("bundleStartGame", bundle);
+        startActivity(startGame);
+    }
+
+    private void removeGameRoom() {
+        String room_name = game_room;
+        GameRoom game = new GameRoom(room_name, host_user, client_user);
+
+        mDatabase.child("game_rooms").child(game_room).removeValue();
+    }
 }
