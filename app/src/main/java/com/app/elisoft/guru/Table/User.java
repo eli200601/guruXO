@@ -10,7 +10,12 @@ public class User implements Serializable {
     private String password;
     private long lastLogin;
 
-    public User(){}
+    public User(){
+        uid = "";
+        email = "";
+        password = "";
+        lastLogin = 0;
+    }
 
     public User(String uid, String email, String password, long lastLogin) {
         this.uid = uid;

@@ -33,7 +33,7 @@ public class InviteDialog extends AppCompatActivity {
     static final String TAG = "InviteDialog";
     private FirebaseAuth auth;
     private String FCM_API_KEY = "AAAAK_9HT5E:APA91bHdVCtHBj8p6ovE8kGQmTWZdrLSE6b9WGH58Cio-GXI7umvkfGe8B4nG4v3At2a486iV_vUh65pOMMIr87K876QyTWKZZ2ZodZCpHBqqAvDTyO2Ux-oDJtvjA2lxNipfP87_6Mr";
-    User host_user, client_user;
+    User host_user, client_user, current_user;
     String game_room;
 
     private DatabaseReference mDatabase;
@@ -55,6 +55,7 @@ public class InviteDialog extends AppCompatActivity {
         Bundle bundle = intent.getBundleExtra("bundleUser");
         client_user = (User) bundle.getSerializable("UserClient");
         host_user = (User) bundle.getSerializable("UserHost");
+        current_user = host_user;
 
         Log.d(TAG, "Host!!! " + host_user.getEmail());
         Log.d(TAG, "client_user!!! " + client_user.getEmail());
@@ -140,6 +141,7 @@ public class InviteDialog extends AppCompatActivity {
         bundle.putSerializable("UserClient", client_user);
         bundle.putSerializable("UserHost", host_user);
         bundle.putString("game_room", game_room);
+        bundle.putSerializable("profile", current_user);
 
         Intent startGame = new Intent(this, GameActivity.class);
 

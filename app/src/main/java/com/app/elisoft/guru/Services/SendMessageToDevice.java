@@ -29,7 +29,7 @@ public class SendMessageToDevice  extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "SendMessageToDevice - onHandleIntent");
 
-        String host_name, host_uid, address_prefix, client_uid, game_room, request_type;
+        String host_name, host_uid, address_prefix, client_uid, game_room, request_type, turn;
         host_name = intent.getStringExtra("host_name");
         host_uid = intent.getStringExtra("host_uid");
         client_uid = intent.getStringExtra("client_uid");

@@ -1,85 +1,237 @@
 package com.app.elisoft.guru.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.R;
+import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.User;
+import com.app.elisoft.guru.TicTacToe.GameManager;
+import com.app.elisoft.guru.Utils.Keys;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by EliranA on 5/31/2017.
  */
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends BaseActivity {
 
     private static final String TAG = GameActivity.class.getSimpleName();
-    //    Player1      Player2
-    User host_user, client_user;
+    //    Player1      Player2   profile = me
+    User host_user, client_user, profile, turn;
     String game_room;
-    ImageView[][] matrix;
+    ImageView[][] matrixView;
+    TextView title, desc, turnTitle, score;
+
+    int myScore, otherScore, draws;
+
+    GameManager gameManager;
+
+    private EventBus eventBus = EventBus.getDefault();
 
 
-
-    TextView host,client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_room);
+
+        gameManager = GameManager.getInstance();
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleStartGame");
         client_user = (User) bundle.getSerializable("UserClient");
         host_user = (User) bundle.getSerializable("UserHost");
         game_room = bundle.getString("game_room");
-
+        profile = (User) bundle.getSerializable("profile");
+        turn = new User();
 
         initGameBoard();
 
-//        host = (TextView) findViewById(R.id.host_name);
-//        client = (TextView) findViewById(R.id.client_name);
-//
-//        host.setText(host_user.getEmail());
-//        client.setText(client_user.getEmail());
-    }
-
-    public void initGameBoard(){
-        matrix = new ImageView[3][3];
-
-        matrix[0][0] = (ImageView) findViewById(R.id.one);
-        matrix[0][1] = (ImageView) findViewById(R.id.two);
-        matrix[0][2] = (ImageView) findViewById(R.id.three);
-        matrix[1][0] = (ImageView) findViewById(R.id.four);
-        matrix[1][1] = (ImageView) findViewById(R.id.five);
-        matrix[1][2] = (ImageView) findViewById(R.id.six);
-        matrix[2][0] = (ImageView) findViewById(R.id.seven);
-        matrix[2][1] = (ImageView) findViewById(R.id.eight);
-        matrix[2][2] = (ImageView) findViewById(R.id.nine);
-
-        for(int i =0; i < 3; i++) {
-            for (int j = 0; j < 3; j++){
-                matrix[i][j].setVisibility(View.INVISIBLE);
-            }
+        if (host_user.getEmail().equals(profile.getEmail())) {
+            //This is Host device
+            if (gameManager.flipCoin() == 0) {
+                turn = host_user;
+            } else turn = client_user;
+            Log.d(TAG, "Its turn: "+ turn.getEmail());
+            sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
+            initRibbon();
+        } else {
+            //This is Client device
+            showProgressDialog("Waiting for Host to join");
         }
 
     }
+
+    private void initRibbon() {
+        title = (TextView) findViewById(R.id.status_title);
+        desc = (TextView) findViewById(R.id.sub_title);
+        turnTitle = (TextView) findViewById(R.id.turn_title);
+        score = (TextView) findViewById(R.id.score_title);
+
+        myScore = 0;
+        otherScore = 0;
+        draws = 0;
+
+        //Setting up title
+        String otherName;
+        if (profile.getEmail().equals(client_user.getEmail())) otherName = host_user.getEmail().split("@")[0];
+            else otherName = client_user.getEmail().split("@")[0];
+        String titleS = profile.getEmail().split("@")[0] + " Vs " + otherName;
+        title.setText(titleS);
+
+        //Setting up description
+        String descS = "Description";
+        desc.setText(descS);
+
+        //Setting up Turn text
+        String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
+        turnTitle.setText(turnS);
+
+        //Setting up Score
+        String sep = " - ";
+        String scoreString;
+        scoreString = String.valueOf(myScore) + sep + String.valueOf(otherScore) + " Draw's: " + String.valueOf(draws);
+        score.setText(scoreString);
+
+    }
+
+    public void sendMessage(String type, String message) {
+        Intent intentNew = new Intent(GameActivity.this, SendMessageToDevice.class);
+        intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
+        intentNew.putExtra("host_uid", host_user.getUid());
+        intentNew.putExtra("address_prefix", "room_");
+        intentNew.putExtra("client_uid", game_room);
+        intentNew.putExtra("game_room", game_room);
+        intentNew.putExtra("request_type", type);
+        intentNew.putExtra("message", message);
+        intentNew.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        startService(intentNew);
+    }
+
+
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return super.onCreateView(parent, name, context, attrs);
+    }
+    public class ViewHolder {
+
+
+    }
+
+
+    public void initGameBoard(){
+        matrixView = new ImageView[3][3];
+        matrixView[0][0] = (ImageView) findViewById(R.id.one);
+        matrixView[0][1] = (ImageView) findViewById(R.id.two);
+        matrixView[0][2] = (ImageView) findViewById(R.id.three);
+        matrixView[1][0] = (ImageView) findViewById(R.id.four);
+        matrixView[1][1] = (ImageView) findViewById(R.id.five);
+        matrixView[1][2] = (ImageView) findViewById(R.id.six);
+        matrixView[2][0] = (ImageView) findViewById(R.id.seven);
+        matrixView[2][1] = (ImageView) findViewById(R.id.eight);
+        matrixView[2][2] = (ImageView) findViewById(R.id.nine);
+
+
+        int position = 1;
+        for(int i =0; i < 3; i++) {
+            for (int j = 0; j < 3; j++){
+                matrixView[i][j].setVisibility(View.VISIBLE);
+                matrixView[i][j].setImageResource(R.drawable.empty_icon);
+                matrixView[i][j].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "I clicked on item: " + getPosition(view));
+
+                    }
+                });
+            }
+        }
+
+
+    }
+
+    public boolean isMyTurn(){
+        if (turn.getEmail().equals(profile.getEmail())){
+            //Its my turn :)
+            return true;
+        } else return false;
+    }
+
 
 
     @Override
     protected void onResume() {
         super.onResume();
         FirebaseMessaging.getInstance().subscribeToTopic("room_" + game_room);
+        eventBus.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         FirebaseMessaging.getInstance().unsubscribeFromTopic("room_" + game_room);
+        eventBus.unregister(this);
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessageEvent messageEvent) {
+        if (messageEvent instanceof MessageEvent.UserArrive) {
+            //Host arrived (This is client  device code)
+            Log.d(TAG, "Host arrived (This is client  device code) | its turn: " + ((MessageEvent.UserArrive) messageEvent).getMessage());
+            String turnString = ((MessageEvent.UserArrive) messageEvent).getMessage();
+            if (turnString.equals(host_user.getEmail())) {
+                turn = host_user;
+            } else turn = client_user;
+
+            initRibbon();
+            hideProgressDialog();
+        }
+    }
+    public int getPosition(View view){
+        int id = view.getId();
+        switch (id) {
+            case R.id.one: {
+                return 1;
+            }
+            case R.id.two: {
+                return 2;
+            }
+            case R.id.three: {
+                return 3;
+            }
+            case R.id.four: {
+                return 4;
+            }
+            case R.id.five: {
+                return 5;
+            }
+            case R.id.six: {
+                return 6;
+            }
+            case R.id.seven: {
+                return 7;
+            }
+            case R.id.eight: {
+                return 8;
+            }
+            case R.id.nine: {
+                return 9;
+            }
+            default:
+                return 1;
+        }
+    }
 
 }

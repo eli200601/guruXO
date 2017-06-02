@@ -28,7 +28,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class GotInviteDialog extends AppCompatActivity {
 
     static final String TAG = "GotInviteDialog";
-    User host_user, client_user;
+    User host_user, client_user, current_user;
     String game_room;
 
     private DatabaseReference mDatabase;
@@ -43,11 +43,13 @@ public class GotInviteDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_got_invite);
 
+
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleGotInvite");
         client_user = (User) bundle.getSerializable("UserClient");
         host_user = (User) bundle.getSerializable("UserHost");
         game_room = bundle.getString("game_room");
+        current_user = client_user ;
 
         Log.d(TAG, "Host!!! " + host_user.getEmail());
         Log.d(TAG, "client_user!!! " + client_user.getEmail());
@@ -112,6 +114,7 @@ public class GotInviteDialog extends AppCompatActivity {
         bundle.putSerializable("UserClient", client_user);
         bundle.putSerializable("UserHost", host_user);
         bundle.putString("game_room", game_room);
+        bundle.putSerializable("profile", current_user);
 
         Intent startGame = new Intent(this, GameActivity.class);
 

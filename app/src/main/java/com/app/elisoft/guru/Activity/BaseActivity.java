@@ -21,6 +21,16 @@ public class BaseActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
+    public void showProgressDialog(String message) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();

@@ -81,7 +81,6 @@ public class MainActivity extends BaseActivity {
         usersList = new ArrayList<>();
         showProgressDialog();
 
-
     }
 
 //    private void collectUserList(ArrayList<User> users) {

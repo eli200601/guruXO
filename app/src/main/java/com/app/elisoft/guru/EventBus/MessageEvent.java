@@ -33,5 +33,15 @@ public class MessageEvent {
         }
     }
 
+    public static class UserArrive extends MessageEvent {
+        String message;
+        public UserArrive(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+
 
 }

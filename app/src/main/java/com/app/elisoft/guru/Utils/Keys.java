@@ -13,6 +13,10 @@ public class Keys {
     public static final String REQUEST_TYPE = "request_type";
     public static final String REQUEST_TYPE_INVITE = "invite";
     public static final String REQUEST_TYPE_RESPONSE_TO_INVITE = "response_invite";
+    public static final String MESSAGE_ARRIVE = "arrive";
+
+
+
     public static final String RESPONSE_AGREE = "agree";
     public static final String RESPONSE_DECLINE = "decline";
 }
