@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Xml;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,12 +15,16 @@ import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.User;
 import com.app.elisoft.guru.TicTacToe.GameManager;
+import com.app.elisoft.guru.TicTacToe.Item;
+import com.app.elisoft.guru.TicTacToe.Sign;
 import com.app.elisoft.guru.Utils.Keys;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
 
 /**
  * Created by EliranA on 5/31/2017.
@@ -28,8 +33,12 @@ import org.greenrobot.eventbus.ThreadMode;
 public class GameActivity extends BaseActivity {
 
     private static final String TAG = GameActivity.class.getSimpleName();
+    private static final int GAME_SIZE = 3;
+
     //    Player1      Player2   profile = me
     User host_user, client_user, profile, turn;
+    Sign myPice, otherPice;
+
     String game_room;
     ImageView[][] matrixView;
     TextView title, desc, turnTitle, score;
@@ -47,6 +56,7 @@ public class GameActivity extends BaseActivity {
         setContentView(R.layout.activity_game_room);
 
         gameManager = GameManager.getInstance();
+        gameManager.initList();
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleStartGame");
@@ -64,9 +74,13 @@ public class GameActivity extends BaseActivity {
                 turn = host_user;
             } else turn = client_user;
             Log.d(TAG, "Its turn: "+ turn.getEmail());
+            myPice = Sign.X;
+            otherPice = Sign.O;
             sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
             initRibbon();
         } else {
+            myPice = Sign.O;
+            otherPice = Sign.X;
             //This is Client device
             showProgressDialog("Waiting for Host to join");
         }
@@ -91,18 +105,18 @@ public class GameActivity extends BaseActivity {
         title.setText(titleS);
 
         //Setting up description
-        String descS = "Description";
+        String descS = "My Sign is: " + myPice.toString();
         desc.setText(descS);
-
-        //Setting up Turn text
-        String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
-        turnTitle.setText(turnS);
 
         //Setting up Score
         String sep = " - ";
         String scoreString;
         scoreString = String.valueOf(myScore) + sep + String.valueOf(otherScore) + " Draw's: " + String.valueOf(draws);
         score.setText(scoreString);
+
+        //Setting up Turn text
+        String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
+        turnTitle.setText(turnS);
 
     }
 
@@ -151,8 +165,49 @@ public class GameActivity extends BaseActivity {
                 matrixView[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.d(TAG, "I clicked on item: " + getPosition(view));
+                        int position = getPosition(view);
+                        Log.d(TAG, "I clicked on item: " + position);
+                        if (isMyTurn()) {
+                            Log.d(TAG, "Its my turn...");
+                            if (gameManager.canClick(position)) {
+                                Log.d(TAG, "The user click on empty tile");
+                                gameManager.setMove(position, myPice);
+                                //update the new layout
+                                updateGameBoard();
+                                if (gameManager.chechWin()) {
+                                    //ToDo: there is a winner here :)
+                                    Log.d(TAG,"there is a winner here :)");
 
+
+                                }
+                                else
+                                {
+                                    if (gameManager.getMoveNumber() == 9 ) {
+                                        //ToDo: There is a draw here
+                                        Log.d(TAG,"There is a draw here");
+                                    }
+                                    else
+                                    {
+                                        // just normal move...
+                                        Log.d(TAG,"just normal move...");
+                                        //ToDo: send move to other
+                                        sendMessage(Keys.MESSAGE_MOVE, String.valueOf(position));
+                                        // change turn
+                                        changeTurn();
+
+                                    }
+                                }
+                                //ToDo: check if there is win / draw
+
+
+
+
+                            }
+
+                        }
+                        else {
+                            Log.d(TAG, "Its not my turn...");
+                        }
                     }
                 });
             }
@@ -160,6 +215,38 @@ public class GameActivity extends BaseActivity {
 
 
     }
+    public void changeTurn(){
+        turn = getOtherPlayer();
+        updateRibbon();
+    }
+
+    public void updateRibbon(){
+        String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
+        turnTitle.setText(turnS);
+    }
+
+    public void updateGameBoard(){
+        Item[][] data = gameManager.getMatrix();
+
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (data[i][j].getState() == EMPTY) {
+                    matrixView[i][j].setImageResource(R.drawable.empty_icon);
+                } else {
+                    if (data[i][j].getState() == Sign.X) {
+                        matrixView[i][j].setImageResource(R.drawable.x_icon);
+
+                    } else {
+                        if (data[i][j].getState() == Sign.O) {
+                            matrixView[i][j].setImageResource(R.drawable.o_icon);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 
     public boolean isMyTurn(){
         if (turn.getEmail().equals(profile.getEmail())){
@@ -197,8 +284,31 @@ public class GameActivity extends BaseActivity {
 
             initRibbon();
             hideProgressDialog();
+        } else {
+            if (messageEvent instanceof MessageEvent.MoveRequest) {
+                int move = Integer.valueOf( ((MessageEvent.MoveRequest) messageEvent).getMessage() );
+                if (gameManager.canClick(move)) {
+                    Log.d(TAG, "This is a move from the other player");
+                    gameManager.setMove(move, otherPice);
+                    updateGameBoard();
+                    changeTurn();
+                    updateRibbon();
+                }
+
+            }
         }
     }
+
+    public User getOtherPlayer(){
+        if (turn.getEmail().equals(host_user.getEmail())) return client_user;
+        else return host_user;
+//        if (profile.getEmail().equals(host_user.getEmail())) {
+//            return client_user;
+//        } else {
+//            return host_user;
+//        }
+    }
+
     public int getPosition(View view){
         int id = view.getId();
         switch (id) {

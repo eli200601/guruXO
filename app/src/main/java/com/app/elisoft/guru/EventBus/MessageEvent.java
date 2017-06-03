@@ -43,5 +43,15 @@ public class MessageEvent {
         }
     }
 
+    public static class MoveRequest extends MessageEvent {
+        String message;
+        public MoveRequest(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+
 
 }

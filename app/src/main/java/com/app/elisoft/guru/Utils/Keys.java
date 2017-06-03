@@ -14,6 +14,7 @@ public class Keys {
     public static final String REQUEST_TYPE_INVITE = "invite";
     public static final String REQUEST_TYPE_RESPONSE_TO_INVITE = "response_invite";
     public static final String MESSAGE_ARRIVE = "arrive";
+    public static final String MESSAGE_MOVE = "move";
 
 
 
