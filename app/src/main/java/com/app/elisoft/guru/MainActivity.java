@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class MainActivity extends BaseActivity {
 
@@ -76,10 +78,23 @@ public class MainActivity extends BaseActivity {
         alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1001, alarmIntent, 0);
 
-
+        loadPreference();
 
         usersList = new ArrayList<>();
         showProgressDialog();
+
+    }
+
+    private void loadPreference() {
+        String language = "en";
+        Locale myLocale = new Locale(language);
+        Locale.setDefault(myLocale);
+        Configuration config = new Configuration();
+        config.setLocale(myLocale);
+        //manually set layout direction to a LTR location
+        config.setLayoutDirection(new Locale("en"));
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+        String locale = getResources().getConfiguration().locale.getDisplayName();
 
     }
 

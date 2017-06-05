@@ -59,6 +59,27 @@ public class FBMessagingReceiverService extends FirebaseMessagingService {
                         event = new MessageEvent.MoveRequest(date.get("message").toString());
                         bus.post(event);
 
+                    } else {
+                        if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_LAST_MOVE_WIN)) {
+                            Log.d(TAG, "MESSAGE_LAST_MOVE_WIN");
+                            MessageEvent.LastMoveRequestWin event;
+                            event = new MessageEvent.LastMoveRequestWin(date.get("message").toString());
+                            bus.post(event);
+                        } else{
+                            if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_LAST_MOVE_DRAW)) {
+                                Log.d(TAG, "MESSAGE_LAST_MOVE_DRAW");
+                                MessageEvent.LastMoveRequestDraw event;
+                                event = new MessageEvent.LastMoveRequestDraw(date.get("message").toString());
+                                bus.post(event);
+                            } else {
+                                if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_NEW_GAME)) {
+                                    Log.d(TAG, "MESSAGE_NEW_GAME");
+                                    MessageEvent.NewGameRequest event;
+                                    event = new MessageEvent.NewGameRequest(date.get("message").toString());
+                                    bus.post(event);
+                                }
+                            }
+                        }
                     }
                 }
             }

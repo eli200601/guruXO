@@ -53,5 +53,32 @@ public class MessageEvent {
         }
     }
 
+    public static class LastMoveRequestWin extends MessageEvent {
+        String message;
+        public LastMoveRequestWin(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+    public static class LastMoveRequestDraw extends MessageEvent {
+        String message;
+        public LastMoveRequestDraw(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+    public static class NewGameRequest extends MessageEvent {
+        String message;
+        public NewGameRequest(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
 
 }

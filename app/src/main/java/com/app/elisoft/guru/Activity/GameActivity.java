@@ -1,11 +1,12 @@
 package com.app.elisoft.guru.Activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.Xml;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,9 +27,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
 
-/**
- * Created by EliranA on 5/31/2017.
- */
 
 public class GameActivity extends BaseActivity {
 
@@ -38,6 +36,8 @@ public class GameActivity extends BaseActivity {
     //    Player1      Player2   profile = me
     User host_user, client_user, profile, turn;
     Sign myPice, otherPice;
+
+    AlertDialog resultScreen;
 
     String game_room;
     ImageView[][] matrixView;
@@ -66,6 +66,10 @@ public class GameActivity extends BaseActivity {
         profile = (User) bundle.getSerializable("profile");
         turn = new User();
 
+        myScore = 0;
+        otherScore = 0;
+        draws = 0;
+
         initGameBoard();
 
         if (host_user.getEmail().equals(profile.getEmail())) {
@@ -93,9 +97,6 @@ public class GameActivity extends BaseActivity {
         turnTitle = (TextView) findViewById(R.id.turn_title);
         score = (TextView) findViewById(R.id.score_title);
 
-        myScore = 0;
-        otherScore = 0;
-        draws = 0;
 
         //Setting up title
         String otherName;
@@ -109,10 +110,7 @@ public class GameActivity extends BaseActivity {
         desc.setText(descS);
 
         //Setting up Score
-        String sep = " - ";
-        String scoreString;
-        scoreString = String.valueOf(myScore) + sep + String.valueOf(otherScore) + " Draw's: " + String.valueOf(draws);
-        score.setText(scoreString);
+        updateRibbonScore();
 
         //Setting up Turn text
         String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
@@ -138,8 +136,21 @@ public class GameActivity extends BaseActivity {
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         return super.onCreateView(parent, name, context, attrs);
     }
-    public class ViewHolder {
 
+    public void showGameResultDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //do things
+                        resetRound();
+                        sendMessage(Keys.MESSAGE_NEW_GAME, turn.getEmail());
+                        dialog.cancel();
+                    }
+                });
+        resultScreen = builder.create();
+        resultScreen.show();
 
     }
 
@@ -178,6 +189,11 @@ public class GameActivity extends BaseActivity {
                                     //ToDo: there is a winner here :)
                                     Log.d(TAG,"there is a winner here :)");
 
+                                    sendMessage(Keys.MESSAGE_LAST_MOVE_WIN, String.valueOf(position));
+                                    showGameResultDialog("You Win!");
+                                    addPoints(profile.getEmail());
+                                    updateRibbonScore();
+                                    turn = new User();
 
                                 }
                                 else
@@ -185,6 +201,12 @@ public class GameActivity extends BaseActivity {
                                     if (gameManager.getMoveNumber() == 9 ) {
                                         //ToDo: There is a draw here
                                         Log.d(TAG,"There is a draw here");
+                                        sendMessage(Keys.MESSAGE_LAST_MOVE_DRAW, String.valueOf(position));
+                                        showGameResultDialog("Draw");
+                                        addPoints("draw");
+                                        updateRibbonScore();
+                                        turn = new User();
+
                                     }
                                     else
                                     {
@@ -197,7 +219,7 @@ public class GameActivity extends BaseActivity {
 
                                     }
                                 }
-                                //ToDo: check if there is win / draw
+                                
 
 
 
@@ -215,6 +237,34 @@ public class GameActivity extends BaseActivity {
 
 
     }
+
+    public void resetRound() {
+        gameManager.initList();
+        updateGameBoard();
+        if (gameManager.flipCoin() == 0) {
+            turn = host_user;
+        } else turn = client_user;
+        Log.d(TAG, "Its turn: "+ turn.getEmail());
+        initRibbon();
+    }
+
+    public void resetRoundWithoutCoin() {
+        gameManager.initList();
+        updateGameBoard();
+        Log.d(TAG, "Its turn: "+ turn.getEmail());
+        initRibbon();
+    }
+
+    private void addPoints(String to) {
+        if (to.equals("draw")) {
+            draws++;
+        } else {
+            if (to.equals(profile.getEmail())) {
+                myScore++;
+            } else otherScore++;
+        }
+    }
+
     public void changeTurn(){
         turn = getOtherPlayer();
         updateRibbon();
@@ -223,6 +273,13 @@ public class GameActivity extends BaseActivity {
     public void updateRibbon(){
         String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
         turnTitle.setText(turnS);
+    }
+
+    public void updateRibbonScore(){
+        String sep = " - ";
+        String scoreString;
+        scoreString = String.valueOf(myScore) + sep + String.valueOf(otherScore) + " Draw's: " + String.valueOf(draws);
+        score.setText(scoreString);
     }
 
     public void updateGameBoard(){
@@ -295,6 +352,44 @@ public class GameActivity extends BaseActivity {
                     updateRibbon();
                 }
 
+            } else {
+                if (messageEvent instanceof MessageEvent.LastMoveRequestWin) {
+                    int move = Integer.valueOf( ((MessageEvent.LastMoveRequestWin) messageEvent).getMessage() );
+                    if (gameManager.canClick(move)) {
+                        Log.d(TAG, "This is a win move from the other player");
+                        gameManager.setMove(move, otherPice);
+                        otherScore++;
+                        updateGameBoard();
+                        updateRibbonScore();
+                        turn = new User();
+                        showGameResultDialog("You Lose!");
+                    }
+                } else {
+                    if (messageEvent instanceof MessageEvent.LastMoveRequestDraw) {
+                        //when draw
+                        int move = Integer.valueOf( ((MessageEvent.LastMoveRequestDraw) messageEvent).getMessage() );
+                        if (gameManager.canClick(move)) {
+                            gameManager.setMove(move, otherPice);
+                            draws++;
+                            updateRibbonScore();
+                            updateGameBoard();
+                            turn = new User();
+                            showGameResultDialog("Draw");
+                        }
+                    } else {
+                        if (messageEvent instanceof MessageEvent.NewGameRequest) {
+                            Log.d(TAG, "Got new game request");
+                            String turnString = ((MessageEvent.NewGameRequest) messageEvent).getMessage();
+                            if (turnString.equals(host_user.getEmail())) {
+                                turn = host_user;
+                            } else turn = client_user;
+                            initRibbon();
+                            resultScreen.cancel();
+                            resetRoundWithoutCoin();
+
+                        }
+                    }
+                }
             }
         }
     }
