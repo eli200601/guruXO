@@ -67,7 +67,7 @@
 
 
         <ImageView
-            android:id="@+id/logout_button"
+            android:id="@+id/exit_button"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@mipmap/logout_icon"

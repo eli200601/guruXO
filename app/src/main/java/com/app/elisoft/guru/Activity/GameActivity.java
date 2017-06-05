@@ -35,13 +35,14 @@ public class GameActivity extends BaseActivity {
 
     //    Player1      Player2   profile = me
     User host_user, client_user, profile, turn;
-    Sign myPice, otherPice;
+    Sign myPiece, otherPiece;
 
     AlertDialog resultScreen;
 
     String game_room;
     ImageView[][] matrixView;
     TextView title, desc, turnTitle, score;
+    ImageView exit_button;
 
     int myScore, otherScore, draws;
 
@@ -72,19 +73,28 @@ public class GameActivity extends BaseActivity {
 
         initGameBoard();
 
+        exit_button = (ImageView) findViewById(R.id.exit_button);
+        exit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(Keys.MESSAGE_QUIT, profile.getEmail());
+                finish();
+            }
+        });
+
         if (host_user.getEmail().equals(profile.getEmail())) {
             //This is Host device
             if (gameManager.flipCoin() == 0) {
                 turn = host_user;
             } else turn = client_user;
             Log.d(TAG, "Its turn: "+ turn.getEmail());
-            myPice = Sign.X;
-            otherPice = Sign.O;
+            myPiece = Sign.X;
+            otherPiece = Sign.O;
             sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
             initRibbon();
         } else {
-            myPice = Sign.O;
-            otherPice = Sign.X;
+            myPiece = Sign.O;
+            otherPiece = Sign.X;
             //This is Client device
             showProgressDialog("Waiting for Host to join");
         }
@@ -92,6 +102,7 @@ public class GameActivity extends BaseActivity {
     }
 
     private void initRibbon() {
+
         title = (TextView) findViewById(R.id.status_title);
         desc = (TextView) findViewById(R.id.sub_title);
         turnTitle = (TextView) findViewById(R.id.turn_title);
@@ -106,7 +117,7 @@ public class GameActivity extends BaseActivity {
         title.setText(titleS);
 
         //Setting up description
-        String descS = "My Sign is: " + myPice.toString();
+        String descS = "My Sign is: " + myPiece.toString();
         desc.setText(descS);
 
         //Setting up Score
@@ -154,6 +165,21 @@ public class GameActivity extends BaseActivity {
 
     }
 
+    public void showExitDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //do things
+                        finish();
+                    }
+                });
+        resultScreen = builder.create();
+        resultScreen.show();
+
+    }
+
 
     public void initGameBoard(){
         matrixView = new ImageView[3][3];
@@ -182,7 +208,7 @@ public class GameActivity extends BaseActivity {
                             Log.d(TAG, "Its my turn...");
                             if (gameManager.canClick(position)) {
                                 Log.d(TAG, "The user click on empty tile");
-                                gameManager.setMove(position, myPice);
+                                gameManager.setMove(position, myPiece);
                                 //update the new layout
                                 updateGameBoard();
                                 if (gameManager.chechWin()) {
@@ -219,7 +245,7 @@ public class GameActivity extends BaseActivity {
 
                                     }
                                 }
-                                
+
 
 
 
@@ -328,6 +354,11 @@ public class GameActivity extends BaseActivity {
         eventBus.unregister(this);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        sendMessage(Keys.MESSAGE_QUIT, profile.getEmail());
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MessageEvent messageEvent) {
@@ -346,7 +377,7 @@ public class GameActivity extends BaseActivity {
                 int move = Integer.valueOf( ((MessageEvent.MoveRequest) messageEvent).getMessage() );
                 if (gameManager.canClick(move)) {
                     Log.d(TAG, "This is a move from the other player");
-                    gameManager.setMove(move, otherPice);
+                    gameManager.setMove(move, otherPiece);
                     updateGameBoard();
                     changeTurn();
                     updateRibbon();
@@ -357,7 +388,7 @@ public class GameActivity extends BaseActivity {
                     int move = Integer.valueOf( ((MessageEvent.LastMoveRequestWin) messageEvent).getMessage() );
                     if (gameManager.canClick(move)) {
                         Log.d(TAG, "This is a win move from the other player");
-                        gameManager.setMove(move, otherPice);
+                        gameManager.setMove(move, otherPiece);
                         otherScore++;
                         updateGameBoard();
                         updateRibbonScore();
@@ -369,7 +400,7 @@ public class GameActivity extends BaseActivity {
                         //when draw
                         int move = Integer.valueOf( ((MessageEvent.LastMoveRequestDraw) messageEvent).getMessage() );
                         if (gameManager.canClick(move)) {
-                            gameManager.setMove(move, otherPice);
+                            gameManager.setMove(move, otherPiece);
                             draws++;
                             updateRibbonScore();
                             updateGameBoard();
@@ -386,7 +417,11 @@ public class GameActivity extends BaseActivity {
                             initRibbon();
                             resultScreen.cancel();
                             resetRoundWithoutCoin();
-
+                        } else {
+                            if (messageEvent instanceof MessageEvent.QuitRequest) {
+                                Log.d(TAG, "Opponent has left the room");
+                                showExitDialog("Opponent has left the room");
+                            }
                         }
                     }
                 }

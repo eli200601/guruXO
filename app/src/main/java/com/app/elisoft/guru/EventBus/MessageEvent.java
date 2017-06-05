@@ -80,5 +80,13 @@ public class MessageEvent {
             return message;
         }
     }
-
+    public static class QuitRequest extends MessageEvent {
+        String message;
+        public QuitRequest(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
 }

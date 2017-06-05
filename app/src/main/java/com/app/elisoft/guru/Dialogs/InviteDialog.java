@@ -148,6 +148,7 @@ public class InviteDialog extends AppCompatActivity {
         startGame.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startGame.putExtra("bundleStartGame", bundle);
         startActivity(startGame);
+        closeDialog();
     }
 
     private void removeGameRoom() {

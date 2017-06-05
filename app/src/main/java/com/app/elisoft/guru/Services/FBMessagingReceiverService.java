@@ -77,7 +77,16 @@ public class FBMessagingReceiverService extends FirebaseMessagingService {
                                     MessageEvent.NewGameRequest event;
                                     event = new MessageEvent.NewGameRequest(date.get("message").toString());
                                     bus.post(event);
+                                } else {
+                                    if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_QUIT)) {
+                                        Log.d(TAG, "MESSAGE_QUIT");
+                                        MessageEvent.QuitRequest event;
+                                        event = new MessageEvent.QuitRequest(date.get("message").toString());
+                                        bus.post(event);
+
+                                    }
                                 }
+
                             }
                         }
                     }

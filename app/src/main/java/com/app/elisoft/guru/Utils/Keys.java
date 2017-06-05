@@ -18,6 +18,7 @@ public class Keys {
     public static final String MESSAGE_MOVE = "move";
     public static final String MESSAGE_LAST_MOVE_WIN = "last_move_win";
     public static final String MESSAGE_LAST_MOVE_DRAW = "last_move_draw";
+    public static final String MESSAGE_QUIT = "quit";
 
     public static final String RESPONSE_AGREE = "agree";
     public static final String RESPONSE_DECLINE = "decline";

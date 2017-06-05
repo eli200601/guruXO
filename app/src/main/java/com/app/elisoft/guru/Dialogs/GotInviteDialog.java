@@ -121,6 +121,7 @@ public class GotInviteDialog extends AppCompatActivity {
         startGame.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startGame.putExtra("bundleStartGame", bundle);
         startActivity(startGame);
+        closeDialog();
     }
 
     @Override
