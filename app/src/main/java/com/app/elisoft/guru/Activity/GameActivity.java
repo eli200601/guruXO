@@ -357,6 +357,12 @@ public class GameActivity extends BaseActivity {
     @Override
     public void onStop() {
         super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         sendMessage(Keys.MESSAGE_QUIT, profile.getEmail());
     }
 

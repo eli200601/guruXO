@@ -17,7 +17,8 @@
             android:theme="@style/AppTheme.NoTitleHeader"
             android:supportsRtl="false"
             android:layoutDirection="ltr"
-            android:configChanges="locale">
+            android:configChanges="locale"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,6 +28,7 @@
         <activity
             android:name=".Activity.LoginActivity"
             android:label="Login to Guru"
+            android:screenOrientation="portrait"
             android:supportsRtl="false"
             android:layoutDirection="ltr"
             android:configChanges="locale"
@@ -35,6 +37,7 @@
         <activity
             android:name="com.app.elisoft.guru.Dialogs.InviteDialog"
             android:label="Invite Player"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             android:supportsRtl="false"
             android:layoutDirection="ltr"
@@ -43,6 +46,7 @@
         <activity
             android:name="com.app.elisoft.guru.Dialogs.GotInviteDialog"
             android:label="Invited Player"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             android:supportsRtl="false"
             android:layoutDirection="ltr"
@@ -51,6 +55,7 @@
         <activity
             android:name="com.app.elisoft.guru.Activity.GameActivity"
             android:label="Game Room"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitleHeader"
             android:supportsRtl="false"
             android:layoutDirection="ltr"

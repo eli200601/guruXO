@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -72,7 +73,21 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    mDatabase = FirebaseDatabase.getInstance().getReference();
+                    mDatabase.child("users").addValueEventListener(valueEventListener);
+                }
+
+            }
+        };
+        mAuth.addAuthStateListener(mAuthListener);
+
+
 
         // Init The Update user login Intent
         alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -180,7 +195,7 @@ public class MainActivity extends BaseActivity {
         }
 
 
-        mDatabase.child("users").addValueEventListener(valueEventListener);
+
         //Setting up the user name title
         userNameTitle = (TextView) findViewById(R.id.user_name_title);
         String name = "hi, " + currentUser.getEmail().split("@")[0];
