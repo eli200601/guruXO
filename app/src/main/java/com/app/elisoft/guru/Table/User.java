@@ -9,12 +9,14 @@ public class User implements Serializable {
     private String email;
     private String password;
     private long lastLogin;
+    String iconURL;
 
     public User(){
         uid = "";
         email = "";
         password = "";
         lastLogin = 0;
+        iconURL = null;
     }
 
     public User(String uid, String email, String password, long lastLogin) {
@@ -22,6 +24,23 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
         this.lastLogin = lastLogin;
+        this.iconURL = null;
+    }
+
+    public User(String uid, String email, String password, long lastLogin, String iconURL) {
+        this.uid = uid;
+        this.email = email;
+        this.password = password;
+        this.lastLogin = lastLogin;
+        this.iconURL = iconURL;
+    }
+
+    public String getIconURL() {
+        return iconURL;
+    }
+
+    public void setIconURL(String iconURL) {
+        this.iconURL = iconURL;
     }
 
     public String getUid() {

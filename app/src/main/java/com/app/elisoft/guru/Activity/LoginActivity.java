@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -180,6 +181,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            onAuthSuccess(mAuth.getCurrentUser(), "null");
+                            launchLobby();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -361,11 +364,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void onAuthSuccess(FirebaseUser user, String password) {
         String uid = user.getUid();
         String email = user.getEmail();
-        //password
         long lastLogin = System.currentTimeMillis();
+        String iconURL = null;
+
+        for (UserInfo user1: user.getProviderData()) {
+            Log.d(TAG, "User data: " + user1.getProviderId());
+            if (user1.getProviderId().equals("google.com")) {
+                iconURL = user1.getPhotoUrl().toString();
+                Log.d(TAG, "User URL: " + iconURL);
+            }
+
+        }
+        //password
+        writeNewGoogleUser(uid, email, password, lastLogin, iconURL);
 
         // Write new user
-        writeNewUser(uid, email, password, lastLogin);
+
+    }
+
+    private void writeNewGoogleUser(String uid, String email, String password, long lastLogin, String iconURL) {
+        Log.d(TAG, "writeNewGoogleUser");
+        User user = new User(uid, email, password, lastLogin, iconURL);
+        mDatabase.child("users").child(uid).setValue(user);
+//        mDatabase.child("users").child(uid).child("lastLogin").setValue(1);
+
     }
 
     private void writeNewUser(String uid, String email, String password, long lastLogin) {

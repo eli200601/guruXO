@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.app.elisoft.guru.Dialogs.InviteDialog;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -47,6 +48,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
         String userName = user.getEmail();
         long lastPing = user.getLastLogin();
         String lastStatus;
+        String iconURL = user.getIconURL();
+
+        if (iconURL != null){
+            Log.d(TAG, "This is google user!");
+        }
+//        Uri uri = Uri.parse(iconURL);
+        Picasso.with(context)
+                .load(iconURL)
+                .placeholder(R.mipmap.profile_icon)
+                .error(R.mipmap.profile_icon)
+                .into(holder.userIcon);
+
+
+
 
         lastStatus = setLastOnlineStatus(lastPing);
         if (lastStatus.equals("ONLINE")) {
@@ -59,6 +74,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
             holder.onlineIndication.setVisibility(View.INVISIBLE);
         }
         holder.userName.setText(userName.split("@")[0]);
+
+
 
         holder.setItemClickListener(new ItemClickListener() {
             @Override

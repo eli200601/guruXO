@@ -8,4 +8,6 @@
 
     <dimen name="online_indication">20dp</dimen>
 
+    <dimen name="user_icon_size">60dp</dimen>
+
 </resources>

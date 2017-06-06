@@ -14,6 +14,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
     TextView userName;
     TextView lastLogin;
     ImageView onlineIndication;
+    ImageView userIcon;
 
     RelativeLayout item;
 
@@ -25,6 +26,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         lastLogin = (TextView) itemView.findViewById(R.id.last_seen_text);
         onlineIndication = (ImageView) itemView.findViewById(R.id.user_online);
         item = (RelativeLayout) itemView.findViewById(R.id.single_item);
+        userIcon = (ImageView) itemView.findViewById(R.id.user_profile_icon);
 
         item.setOnClickListener(this);
     }
