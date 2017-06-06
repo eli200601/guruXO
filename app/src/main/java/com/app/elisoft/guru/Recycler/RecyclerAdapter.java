@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.app.elisoft.guru.Dialogs.InviteDialog;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
+import com.app.elisoft.guru.Utils.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -58,10 +59,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
                 .load(iconURL)
                 .placeholder(R.mipmap.profile_icon)
                 .error(R.mipmap.profile_icon)
+                .transform(new CircleTransform())
                 .into(holder.userIcon);
-
-
-
 
         lastStatus = setLastOnlineStatus(lastPing);
         if (lastStatus.equals("ONLINE")) {
