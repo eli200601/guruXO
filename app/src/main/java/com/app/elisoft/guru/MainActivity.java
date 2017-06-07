@@ -77,8 +77,8 @@ public class MainActivity extends BaseActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                currentUser = firebaseAuth.getCurrentUser();
+                if (currentUser != null) {
                     mDatabase = FirebaseDatabase.getInstance().getReference();
                     mDatabase.child("users").addValueEventListener(valueEventListener);
                 }
@@ -147,28 +147,26 @@ public class MainActivity extends BaseActivity {
     private ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-
-//                if (usersList.size() < snapshot.getChildrenCount()) {
             hideProgressDialog();
             usersList.clear();
-
             Log.d(TAG ,"" + dataSnapshot.getChildrenCount());
-            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+            if (currentUser!= null ) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
 
-                User post = postSnapshot.getValue(User.class);
+                    User post = postSnapshot.getValue(User.class);
 
-                Log.d(TAG, post.getEmail());
-                if (!currentUser.getUid().equals(post.getUid())) {
-                    usersList.add(post);
+                    Log.d(TAG, post.getEmail());
+                    if (!currentUser.getUid().equals(post.getUid())) {
+                        usersList.add(post);
+                    } else {
+                        currentUserLocal = post;
+                    }
                 }
-
+                sortApplicationList();
+                Log.d(TAG, "User list size is: "+ String.valueOf(usersList.size()));
+                mAdapter.setItems(usersList);
+                mAdapter.notifyDataSetChanged();
             }
-            sortApplicationList();
-            Log.d(TAG, "User list size is: "+ String.valueOf(usersList.size()));
-            mAdapter.setItems(usersList);
-            mAdapter.notifyDataSetChanged();
-//                }
-
         }
 
         @Override
@@ -185,7 +183,7 @@ public class MainActivity extends BaseActivity {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
             startUpdateUserStatus();
-            currentUserLocal = new User(currentUser.getUid(),currentUser.getEmail(),"", 0);
+
 
             } else {
             // User is signed out from FireBase

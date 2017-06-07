@@ -16,6 +16,8 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
     ImageView onlineIndication;
     ImageView userIcon;
 
+    TextView userWin, userLose, userDraw;
+
     RelativeLayout item;
 
     ItemClickListener itemClickListener;
@@ -27,6 +29,9 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         onlineIndication = (ImageView) itemView.findViewById(R.id.user_online);
         item = (RelativeLayout) itemView.findViewById(R.id.single_item);
         userIcon = (ImageView) itemView.findViewById(R.id.user_profile_icon);
+        userWin = (TextView) itemView.findViewById(R.id.wins_amount);
+        userLose = (TextView) itemView.findViewById(R.id.loses_amount);
+        userDraw = (TextView) itemView.findViewById(R.id.draws_amount);
 
         item.setOnClickListener(this);
     }

@@ -9,7 +9,14 @@ public class User implements Serializable {
     private String email;
     private String password;
     private long lastLogin;
-    String iconURL;
+    private String iconURL;
+    private String myWins;
+    private String myLoses;
+    private String myDraws;
+
+    public void setMyDraws(String myDraws) {
+        this.myDraws = myDraws;
+    }
 
     public User(){
         uid = "";
@@ -33,6 +40,37 @@ public class User implements Serializable {
         this.password = password;
         this.lastLogin = lastLogin;
         this.iconURL = iconURL;
+    }
+
+    public User(String uid, String email, String password, long lastLogin, String iconURL, String myWins, String myLoses, String myDraws) {
+        this.uid = uid;
+        this.email = email;
+        this.password = password;
+        this.lastLogin = lastLogin;
+        this.iconURL = iconURL;
+        this.myWins = myWins;
+        this.myLoses = myLoses;
+        this.myDraws = myDraws;
+    }
+
+    public String getMyWins() {
+        return myWins;
+    }
+
+    public void setMyWins(String myWins) {
+        this.myWins = myWins;
+    }
+
+    public String getMyLoses() {
+        return myLoses;
+    }
+
+    public void setMyLoses(String myLoses) {
+        this.myLoses = myLoses;
+    }
+
+    public String getMyDraws() {
+        return myDraws;
     }
 
     public String getIconURL() {

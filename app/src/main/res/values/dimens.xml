@@ -10,4 +10,5 @@
 
     <dimen name="user_icon_size">60dp</dimen>
 
+    <dimen name="user_status_padding">2dp</dimen>
 </resources>

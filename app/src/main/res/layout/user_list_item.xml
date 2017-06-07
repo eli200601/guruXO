@@ -19,14 +19,88 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/user_profile_icon"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:text="User name"
             android:textSize="18dp"
             android:textColor="@color/colorPrimaryText"
              />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/user_profile_icon"
+            android:layout_above="@+id/separator"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:weightSum="8"
+
+            >
+                <TextView
+                    android:id="@+id/wins_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wins:"
+                    android:padding="@dimen/user_status_padding"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/wins_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/user_status_padding"
+                    android:text="1"/>
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/user_status_padding"
+                    android:text="|"
+                    android:textColor="@color/colorPrimaryText"/>
+                <TextView
+                    android:id="@+id/loses_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loses:"
+                    android:padding="@dimen/user_status_padding"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/loses_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/user_status_padding"
+                    android:text="1"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/user_status_padding"
+                    android:text="|"
+                    android:textColor="@color/colorPrimaryText"/>
+                <TextView
+                    android:id="@+id/draws_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Draws:"
+                    android:padding="@dimen/user_status_padding"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/draws_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/user_status_padding"
+                    android:text="1"/>
+
+
+        </LinearLayout>
+
+
         <TextView
+            android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="20dp"

@@ -19,6 +19,8 @@ import com.app.elisoft.guru.TicTacToe.GameManager;
 import com.app.elisoft.guru.TicTacToe.Item;
 import com.app.elisoft.guru.TicTacToe.Sign;
 import com.app.elisoft.guru.Utils.Keys;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,6 +51,8 @@ public class GameActivity extends BaseActivity {
     GameManager gameManager;
 
     private EventBus eventBus = EventBus.getDefault();
+
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
     @Override
@@ -364,7 +368,28 @@ public class GameActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         sendMessage(Keys.MESSAGE_QUIT, profile.getEmail());
+//        if (myScore > 0 || otherScore > 0 || draws > 0) {
+        Log.d(TAG, "Sending user progress");
+        int myWins, myLoses, myDraws;
+        Log.d(TAG, "previous wins: " + profile.getMyWins());
+        if (profile.getMyWins() == null ) myWins = myScore;
+        else myWins = Integer.valueOf(profile.getMyWins()) + myScore;
+
+        Log.d(TAG, "previous Loses: " + profile.getMyLoses());
+        if (profile.getMyLoses() == null ) myLoses = otherScore;
+        else myLoses = Integer.valueOf(profile.getMyLoses()) + otherScore;
+
+        Log.d(TAG, "previous Draws: " + profile.getMyDraws());
+        if (profile.getMyDraws() == null ) myDraws = draws;
+        else myDraws = Integer.valueOf(profile.getMyDraws()) + draws;
+
+        mDatabase.child("users").child(profile.getUid()).child("myWins").setValue(String.valueOf(myWins));
+        mDatabase.child("users").child(profile.getUid()).child("myLoses").setValue(String.valueOf(myLoses));
+        mDatabase.child("users").child(profile.getUid()).child("myDraws").setValue(String.valueOf(myDraws));
+//        }
     }
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MessageEvent messageEvent) {

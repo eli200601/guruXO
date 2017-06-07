@@ -1,4 +1,4 @@
-package com.app.elisoft.guru.Utils;
+package com.app.elisoft.guru.Views;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

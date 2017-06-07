@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.app.elisoft.guru.Dialogs.InviteDialog;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
-import com.app.elisoft.guru.Utils.CircleTransform;
+import com.app.elisoft.guru.Views.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -50,6 +50,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
         long lastPing = user.getLastLogin();
         String lastStatus;
         String iconURL = user.getIconURL();
+        String userWin = user.getMyWins();
+        String userLose = user.getMyLoses();
+        String userDraw = user.getMyDraws();
 
         if (iconURL != null){
             Log.d(TAG, "This is google user!");
@@ -74,7 +77,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
         }
         holder.userName.setText(userName.split("@")[0]);
 
-
+        Log.d(TAG, userWin + " " + userLose + " " + userDraw);
+        if (userWin == null) userWin = "0";
+        if (userLose == null) userLose = "0";
+        if (userDraw == null) userDraw = "0";
+        holder.userWin.setText(userWin);
+        holder.userLose.setText(userLose);
+        holder.userDraw.setText(userDraw);
 
         holder.setItemClickListener(new ItemClickListener() {
             @Override

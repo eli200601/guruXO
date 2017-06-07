@@ -375,6 +375,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             }
 
         }
+
         //password
         writeNewGoogleUser(uid, email, password, lastLogin, iconURL);
 
@@ -385,7 +386,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void writeNewGoogleUser(String uid, String email, String password, long lastLogin, String iconURL) {
         Log.d(TAG, "writeNewGoogleUser");
         User user = new User(uid, email, password, lastLogin, iconURL);
-        mDatabase.child("users").child(uid).setValue(user);
+//        mDatabase.child("users").child(uid).setValue(user);
+        mDatabase.child("users").child(uid).child("uid").setValue(uid);
+        mDatabase.child("users").child(uid).child("email").setValue(email);
+        mDatabase.child("users").child(uid).child("password").setValue(password);
+        mDatabase.child("users").child(uid).child("lastLogin").setValue(lastLogin);
+        mDatabase.child("users").child(uid).child("iconURL").setValue(iconURL);
+
 //        mDatabase.child("users").child(uid).child("lastLogin").setValue(1);
 
     }
