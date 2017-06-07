@@ -61,6 +61,15 @@
             android:layoutDirection="ltr"
             />
 
+        <activity
+            android:name="com.app.elisoft.guru.Activity.LeaderBoardActivity"
+            android:label="Leader Board"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoTitleHeader"
+            android:supportsRtl="false"
+            android:layoutDirection="ltr"
+            />
+
         <service
             android:name="com.app.elisoft.guru.Services.UpdateUserState"
             android:label="Intent"

@@ -224,7 +224,6 @@ public class GameActivity extends BaseActivity {
                                     addPoints(profile.getEmail());
                                     updateRibbonScore();
                                     turn = new User();
-
                                 }
                                 else
                                 {
@@ -236,7 +235,6 @@ public class GameActivity extends BaseActivity {
                                         addPoints("draw");
                                         updateRibbonScore();
                                         turn = new User();
-
                                     }
                                     else
                                     {
@@ -246,16 +244,9 @@ public class GameActivity extends BaseActivity {
                                         sendMessage(Keys.MESSAGE_MOVE, String.valueOf(position));
                                         // change turn
                                         changeTurn();
-
                                     }
                                 }
-
-
-
-
-
                             }
-
                         }
                         else {
                             Log.d(TAG, "Its not my turn...");
@@ -264,8 +255,6 @@ public class GameActivity extends BaseActivity {
                 });
             }
         }
-
-
     }
 
     public void resetRound() {
@@ -368,7 +357,11 @@ public class GameActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         sendMessage(Keys.MESSAGE_QUIT, profile.getEmail());
-//        if (myScore > 0 || otherScore > 0 || draws > 0) {
+        updateUserPoints();
+
+    }
+
+    public void updateUserPoints() {
         Log.d(TAG, "Sending user progress");
         int myWins, myLoses, myDraws;
         Log.d(TAG, "previous wins: " + profile.getMyWins());
@@ -386,7 +379,7 @@ public class GameActivity extends BaseActivity {
         mDatabase.child("users").child(profile.getUid()).child("myWins").setValue(String.valueOf(myWins));
         mDatabase.child("users").child(profile.getUid()).child("myLoses").setValue(String.valueOf(myLoses));
         mDatabase.child("users").child(profile.getUid()).child("myDraws").setValue(String.valueOf(myDraws));
-//        }
+
     }
 
 

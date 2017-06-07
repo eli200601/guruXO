@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.elisoft.guru.Activity.BaseActivity;
+import com.app.elisoft.guru.Activity.LeaderBoardActivity;
 import com.app.elisoft.guru.Activity.LoginActivity;
 import com.app.elisoft.guru.BroadcastReceiver.AlarmReceiver;
 import com.app.elisoft.guru.Dialogs.GotInviteDialog;
@@ -64,6 +64,7 @@ public class MainActivity extends BaseActivity {
     private TextView userNameTitle;
     private ImageView logoutButton;
     private ImageView refresh_button;
+    private ImageView cup_button;
 
 
     @Override
@@ -82,21 +83,48 @@ public class MainActivity extends BaseActivity {
                     mDatabase = FirebaseDatabase.getInstance().getReference();
                     mDatabase.child("users").addValueEventListener(valueEventListener);
                 }
-
             }
         };
         mAuth.addAuthStateListener(mAuthListener);
 
-
-
         // Init The Update user login Intent
         alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1001, alarmIntent, 0);
-
         loadPreference();
-
         usersList = new ArrayList<>();
         showProgressDialog();
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // User is signed in
+            Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
+            startUpdateUserStatus();
+            } else {
+            // User is signed out from FireBase
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+            launchLoginActivity();
+            return;
+        }
+
+        //Setting up the user name title
+        userNameTitle = (TextView) findViewById(R.id.user_name_title);
+        String name = "hi, " + currentUser.getEmail().split("@")[0];
+        userNameTitle.setText(name);
+
+        //Setting up the logout button
+        logoutButton = (ImageView) findViewById(R.id.logout_button);
+        refresh_button = (ImageView) findViewById(R.id.refresh_button);
+        cup_button = (ImageView) findViewById(R.id.cup_button);
+
+        refresh_button.setOnClickListener(listenerRefresh);
+        logoutButton.setOnClickListener(listenerLogout);
+        cup_button.setOnClickListener(listenerCupButton);
 
     }
 
@@ -133,6 +161,14 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onClick(View view) {
             launchLoginActivity();
+        }
+    };
+
+    private View.OnClickListener listenerCupButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent myIntent = new Intent(getApplicationContext(), LeaderBoardActivity.class);
+            startActivity(myIntent);
         }
     };
 
@@ -175,45 +211,6 @@ public class MainActivity extends BaseActivity {
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            // User is signed in
-            Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
-            startUpdateUserStatus();
-
-
-            } else {
-            // User is signed out from FireBase
-            Log.d(TAG, "onAuthStateChanged:signed_out");
-            launchLoginActivity();
-            return;
-        }
-
-
-
-        //Setting up the user name title
-        userNameTitle = (TextView) findViewById(R.id.user_name_title);
-        String name = "hi, " + currentUser.getEmail().split("@")[0];
-        userNameTitle.setText(name);
-
-        //Setting up the logout button
-        logoutButton = (ImageView) findViewById(R.id.logout_button);
-        refresh_button = (ImageView) findViewById(R.id.refresh_button);
-
-        refresh_button.setOnClickListener(listenerRefresh);
-        logoutButton.setOnClickListener(listenerLogout);
-
-        //Init the Recycler ToDo: hare!!!k
-        mAdapter = new RecyclerAdapter(getApplicationContext(), usersList, getUserFromDB(currentUser));
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter);
-
-
-    }
 
     private User getUserFromDB(FirebaseUser firebaseUser) {
         User user = new User(firebaseUser.getUid(),firebaseUser.getEmail(), "", 0);
