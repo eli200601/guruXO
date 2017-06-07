@@ -159,6 +159,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             } else {
                 // Google Sign In failed, update UI appropriately
                 // [START_EXCLUDE]
+                Log.d(TAG, "Failed to login, " + result.getStatus());
                 updateUI(null);
                 // [END_EXCLUDE]
             }

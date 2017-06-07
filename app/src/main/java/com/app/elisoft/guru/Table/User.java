@@ -24,6 +24,20 @@ public class User implements Serializable {
         password = "";
         lastLogin = 0;
         iconURL = null;
+        myWins = "0";
+        myLoses = "0";
+        myDraws = "0";
+    }
+
+    public User(User user){
+        uid = user.getUid();
+        email = user.getEmail();
+        password = user.getPassword();
+        lastLogin = user.getLastLogin();
+        iconURL = user.getIconURL();
+        myWins = user.getMyWins();
+        myLoses = user.getMyLoses();
+        myDraws = user.getMyDraws();
     }
 
     public User(String uid, String email, String password, long lastLogin) {

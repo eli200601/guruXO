@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.app.elisoft.guru.Dialogs.GotInviteDialog;
 import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.Recycler.RecyclerAdapter;
 import com.app.elisoft.guru.Table.User;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
+
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends BaseActivity {
 
@@ -73,7 +77,10 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Fabric.with(this, new Crashlytics());
+
         mAuth = FirebaseAuth.getInstance();
+
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -94,23 +101,34 @@ public class MainActivity extends BaseActivity {
         usersList = new ArrayList<>();
         showProgressDialog();
 
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // User is signed in
+            Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
+            startUpdateUserStatus();
+        } else {
+            // User is signed out from FireBase
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+            launchLoginActivity();
+            return;
+        }
+
+
+
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            // User is signed in
-            Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
-            startUpdateUserStatus();
-            } else {
-            // User is signed out from FireBase
-            Log.d(TAG, "onAuthStateChanged:signed_out");
-            launchLoginActivity();
-            return;
-        }
+
+        //Init the Recycler ToDo: hare!!!k
+        mAdapter = new RecyclerAdapter(getApplicationContext(), usersList, getUserFromDB(currentUser));
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
+
+
 
         //Setting up the user name title
         userNameTitle = (TextView) findViewById(R.id.user_name_title);
@@ -164,13 +182,89 @@ public class MainActivity extends BaseActivity {
         }
     };
 
+    public static ArrayList<User> cloneList(ArrayList<User> list) {
+        ArrayList<User> clone = new ArrayList<User>(list.size());
+        for (User item : list) clone.add(new User(item));
+        return clone;
+    }
+
     private View.OnClickListener listenerCupButton = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            Log.d(TAG, currentUserLocal.getMyWins() + " " +  currentUserLocal.getMyLoses());
+
+            ArrayList<User> allList = new ArrayList<>();
+            allList.clear();
+            allList = cloneList(usersList);
+
+            Log.d(TAG, "allList - " + allList.size());
+            Log.d(TAG, "usersList - " + usersList.size());
+
+            allList.add(currentUserLocal);
+            Log.d(TAG, "allList + userList - " + allList.size());
+            ArrayList<User> topThree = getTopThree(allList);
+
+
+
             Intent myIntent = new Intent(getApplicationContext(), LeaderBoardActivity.class);
+            myIntent.putExtra("top_three_list", topThree);
+
             startActivity(myIntent);
         }
     };
+
+    public ArrayList<User> getTopThree(ArrayList<User> allList){
+        int count = 0;
+        User one,two,three;
+        one = new User();
+        two = new User();
+        three = new User();
+
+        ArrayList<User> orederList = new ArrayList<>();
+        for(User user: allList) {
+            Log.d(TAG, "user " + user.getEmail() + " Wins " + user.getMyWins());
+            int winsUser = Integer.valueOf(user.getMyWins());
+            int winsOne = Integer.valueOf(one.getMyWins());
+            int winsTwo = Integer.valueOf(two.getMyWins());
+            int winsThree = Integer.valueOf(three.getMyWins());
+
+            if (winsUser > winsOne) {
+                User temp2, temp3;
+
+                temp2 = one;
+                temp3 = two;
+
+                one = user;
+                two = temp2;
+                three = temp3;
+
+                Log.d(TAG, "user " + user.getEmail() + " in One");
+            } else {
+                if (winsUser > winsTwo) {
+                    three = two;
+                    two = user;
+                    Log.d(TAG, "user " + user.getEmail() + " in two");
+                } else {
+                    if (winsUser > winsThree) {
+                        three = user;
+                        Log.d(TAG, "user " + user.getEmail() + " in three");
+                    }
+                }
+            }
+
+        }
+        orederList.add(one);
+        orederList.add(two);
+        orederList.add(three);
+
+        for (User user: orederList){
+            Log.d(TAG, "Top 3: " + user.getEmail());
+        }
+
+        return orederList;
+
+
+    }
 
     private View.OnClickListener listenerRefresh = new View.OnClickListener() {
         @Override
@@ -213,7 +307,7 @@ public class MainActivity extends BaseActivity {
 
 
     private User getUserFromDB(FirebaseUser firebaseUser) {
-        User user = new User(firebaseUser.getUid(),firebaseUser.getEmail(), "", 0);
+        User user = new User(currentUser.getUid(),currentUser.getEmail(), "", 0);
         return user;
     }
 
