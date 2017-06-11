@@ -96,6 +96,7 @@ public class GameActivity extends BaseActivity {
             otherPiece = Sign.O;
             sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
             initRibbon();
+            sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
         } else {
             myPiece = Sign.O;
             otherPiece = Sign.X;
@@ -365,20 +366,27 @@ public class GameActivity extends BaseActivity {
         Log.d(TAG, "Sending user progress");
         int myWins, myLoses, myDraws;
         Log.d(TAG, "previous wins: " + profile.getMyWins());
-        if (profile.getMyWins() == null ) myWins = myScore;
-        else myWins = Integer.valueOf(profile.getMyWins()) + myScore;
 
-        Log.d(TAG, "previous Loses: " + profile.getMyLoses());
-        if (profile.getMyLoses() == null ) myLoses = otherScore;
-        else myLoses = Integer.valueOf(profile.getMyLoses()) + otherScore;
+        if (myScore+otherScore+draws > 0) {
+            if (profile.getMyWins() == null ) myWins = myScore;
+            else myWins = Integer.valueOf(profile.getMyWins()) + myScore;
 
-        Log.d(TAG, "previous Draws: " + profile.getMyDraws());
-        if (profile.getMyDraws() == null ) myDraws = draws;
-        else myDraws = Integer.valueOf(profile.getMyDraws()) + draws;
+            Log.d(TAG, "previous Loses: " + profile.getMyLoses());
+            if (profile.getMyLoses() == null ) myLoses = otherScore;
+            else myLoses = Integer.valueOf(profile.getMyLoses()) + otherScore;
 
-        mDatabase.child("users").child(profile.getUid()).child("myWins").setValue(String.valueOf(myWins));
-        mDatabase.child("users").child(profile.getUid()).child("myLoses").setValue(String.valueOf(myLoses));
-        mDatabase.child("users").child(profile.getUid()).child("myDraws").setValue(String.valueOf(myDraws));
+            Log.d(TAG, "previous Draws: " + profile.getMyDraws());
+            if (profile.getMyDraws() == null ) myDraws = draws;
+            else myDraws = Integer.valueOf(profile.getMyDraws()) + draws;
+
+            mDatabase.child("users").child(profile.getUid()).child("myWins").setValue(String.valueOf(myWins));
+            mDatabase.child("users").child(profile.getUid()).child("myLoses").setValue(String.valueOf(myLoses));
+            mDatabase.child("users").child(profile.getUid()).child("myDraws").setValue(String.valueOf(myDraws));
+        }
+
+
+
+
 
     }
 

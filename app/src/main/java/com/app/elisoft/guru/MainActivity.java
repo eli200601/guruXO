@@ -7,9 +7,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import com.app.elisoft.guru.Activity.LeaderBoardActivity;
 import com.app.elisoft.guru.Activity.LoginActivity;
 import com.app.elisoft.guru.BroadcastReceiver.AlarmReceiver;
 import com.app.elisoft.guru.Dialogs.GotInviteDialog;
+import com.app.elisoft.guru.Dialogs.InviteDialog;
 import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.Recycler.RecyclerAdapter;
 import com.app.elisoft.guru.Table.User;
@@ -82,6 +86,7 @@ public class MainActivity extends BaseActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -92,7 +97,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
-        mAuth.addAuthStateListener(mAuthListener);
+
 
         // Init The Update user login Intent
         alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -122,12 +127,12 @@ public class MainActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
 
+
         //Init the Recycler ToDo: hare!!!k
         mAdapter = new RecyclerAdapter(getApplicationContext(), usersList, getUserFromDB(currentUser));
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
-
 
 
         //Setting up the user name title
@@ -144,6 +149,7 @@ public class MainActivity extends BaseActivity {
         logoutButton.setOnClickListener(listenerLogout);
         cup_button.setOnClickListener(listenerCupButton);
 
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     private void loadPreference() {
@@ -442,6 +448,33 @@ public class MainActivity extends BaseActivity {
 //                        }
 //                    });
 //            alertDialog.show();
+        }
+        else {
+            if (messageEvent instanceof MessageEvent.OnUserClickInLobby) {
+                int position = ((MessageEvent.OnUserClickInLobby) messageEvent).getPosition();
+                //                When Clicking on item in list
+                Log.d(TAG, "User clicked on " + position);
+
+                Bundle bundle = new Bundle();
+
+                bundle.putSerializable("UserClient", usersList.get(position));
+                bundle.putSerializable("UserHost", currentUserLocal);
+
+                Intent dialogActivity = new Intent(this, InviteDialog.class);
+                dialogActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                View view_item = mRecyclerView.getLayoutManager().findViewByPosition(position);
+
+
+                Pair<View, String> iconPair = Pair.create(view_item.findViewById(R.id.user_profile_icon), "user_icon");
+
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, iconPair);
+
+                dialogActivity.putExtra("bundleUser", bundle);
+                startActivity(dialogActivity, options.toBundle());
+
+
+            }
         }
     }
 }

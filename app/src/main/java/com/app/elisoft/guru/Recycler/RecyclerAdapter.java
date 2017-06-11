@@ -4,6 +4,8 @@ package com.app.elisoft.guru.Recycler;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.app.elisoft.guru.Dialogs.InviteDialog;
+import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
 import com.app.elisoft.guru.Views.CircleTransform;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -25,6 +30,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
     private Context context;
     private ArrayList<User> usersList;
     private User hostUser;
+
+    private EventBus bus = EventBus.getDefault();
 
     public RecyclerAdapter(Context context, ArrayList<User> usersList, User host) {
         this.context = context;
@@ -89,18 +96,21 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder>{
             @Override
             public void onDataItemClick(View view, int position) {
                 //When Clicking on item in list
-                Log.d(TAG, "Item in Recycler clicked: " + String.valueOf(position));
+//                Log.d(TAG, "Item in Recycler clicked: " + String.valueOf(position));
+//
+//                Bundle bundle = new Bundle();
+//
+//                bundle.putSerializable("UserClient", usersList.get(position));
+//                bundle.putSerializable("UserHost", hostUser);
+//                Intent dialogActivity = new Intent(context, InviteDialog.class);
+//                dialogActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                dialogActivity.putExtra("bundleUser", bundle);
+//
+//                view.getContext().startActivity(dialogActivity);
 
-                Bundle bundle = new Bundle();
-
-                bundle.putSerializable("UserClient", usersList.get(position));
-                bundle.putSerializable("UserHost", hostUser);
-                Intent dialogActivity = new Intent(context, InviteDialog.class);
-                dialogActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                dialogActivity.putExtra("bundleUser", bundle);
-
-                view.getContext().startActivity(dialogActivity);
+                MessageEvent.OnUserClickInLobby event;
+                event = new MessageEvent.OnUserClickInLobby(position);
+                bus.post(event);
             }
         });
 

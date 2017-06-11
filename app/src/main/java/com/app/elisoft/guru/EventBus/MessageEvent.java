@@ -23,6 +23,18 @@ public class MessageEvent {
         }
     }
 
+    public static class OnUserClickInLobby extends MessageEvent {
+        int position;
+        public OnUserClickInLobby(int position) {
+            this.position = position;
+        }
+        public int getPosition() {
+            return position;
+        }
+    }
+
+
+    /*--------------------------------- Game Requests ---------------------------------*/
     public static class OnAcceptInvite extends MessageEvent {
         String message;
         public OnAcceptInvite(String message) {
@@ -89,4 +101,6 @@ public class MessageEvent {
             return message;
         }
     }
+
+
 }

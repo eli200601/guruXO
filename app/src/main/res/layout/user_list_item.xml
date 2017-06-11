@@ -12,6 +12,7 @@
             android:layout_height="@dimen/user_icon_size"
             android:layout_alignParentTop="true"
             android:layout_margin="5dp"
+            android:transitionName="user_icon"
             app:srcCompat="@mipmap/profile_icon" />
 
         <TextView

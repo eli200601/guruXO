@@ -20,6 +20,8 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">false</item>
         <!--<item name="android:windowEnterTransition">@transition/fade_element</item>-->
+
+
     </style>
 
 
