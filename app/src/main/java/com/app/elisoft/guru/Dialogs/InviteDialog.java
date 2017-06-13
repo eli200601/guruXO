@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.lusfold.spinnerloading.SpinnerLoading;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -57,6 +58,7 @@ public class InviteDialog extends AppCompatActivity {
     private ImageView client_user_icon, host_user_icon, vs_icon;
     private TextView client_user_text, host_user_text;
     private Button cancel_button;
+    private SpinnerLoading spinner;
 
 
 
@@ -87,11 +89,16 @@ public class InviteDialog extends AppCompatActivity {
 
         cancel_button = (Button) findViewById(R.id.cancel_invite_dialog);
 
+        spinner = (SpinnerLoading) findViewById(R.id.spinner);
+        spinner.setPaintMode(1);
+        spinner.setCircleRadius(20);
+//        spinner.setItemCount(0);
 
 //        client_user_text.setVisibility(View.INVISIBLE);
         host_user_icon.setVisibility(View.INVISIBLE);
         host_user_text.setVisibility(View.INVISIBLE);
         vs_icon.setVisibility(View.INVISIBLE);
+        spinner.setVisibility(View.INVISIBLE);
 
         String client_user_icon_url = client_user.getIconURL();
         // Load Image of client user
@@ -156,6 +163,30 @@ public class InviteDialog extends AppCompatActivity {
                                         host_user_text.setVisibility(View.VISIBLE);
                                         YoYo.with(Techniques.BounceInUp)
                                                 .duration(1300)
+                                                .withListener(new Animator.AnimatorListener() {
+                                                    @Override
+                                                    public void onAnimationStart(Animator animator) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onAnimationEnd(Animator animator) {
+                                                        Log.d(TAG," Host anim finished onAnimationEnd");
+//                                                        spinner.setVisibility(View.VISIBLE);
+//                                                        spinner.setCircleRadius(90);
+//                                                        spinner.startAnimation();
+                                                    }
+
+                                                    @Override
+                                                    public void onAnimationCancel(Animator animator) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onAnimationRepeat(Animator animator) {
+
+                                                    }
+                                                })
                                                 .playOn(host_user_text);
                                     }
 
