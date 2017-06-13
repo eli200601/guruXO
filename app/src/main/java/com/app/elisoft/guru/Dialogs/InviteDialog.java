@@ -2,13 +2,18 @@ package com.app.elisoft.guru.Dialogs;
 
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Transition;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,8 +54,9 @@ public class InviteDialog extends AppCompatActivity {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    private ImageView client_user_icon, host_user_icon;
-    private TextView vs_text, client_user_text, host_user_text;
+    private ImageView client_user_icon, host_user_icon, vs_icon;
+    private TextView client_user_text, host_user_text;
+    private Button cancel_button;
 
 
 
@@ -73,55 +79,98 @@ public class InviteDialog extends AppCompatActivity {
         supportPostponeEnterTransition();
 
         client_user_icon = (ImageView) findViewById(R.id.invite_client_icon);
+        host_user_icon = (ImageView) findViewById(R.id.invite_host_icon);
+        vs_icon = (ImageView) findViewById(R.id.invite_vs_icon);
+
+        client_user_text = (TextView) findViewById(R.id.invite_client_name);
+        host_user_text = (TextView) findViewById(R.id.invite_host_name);
+
+        cancel_button = (Button) findViewById(R.id.cancel_invite_dialog);
+
+
+//        client_user_text.setVisibility(View.INVISIBLE);
+        host_user_icon.setVisibility(View.INVISIBLE);
+        host_user_text.setVisibility(View.INVISIBLE);
+        vs_icon.setVisibility(View.INVISIBLE);
+
         String client_user_icon_url = client_user.getIconURL();
-        if (client_user_icon_url != null) {
-            Picasso.with(this)
-                    .load(client_user.getIconURL())
-                    .placeholder(R.mipmap.profile_icon)
-                    .error(R.mipmap.profile_icon)
-                    .transform(new CircleTransform())
-                    .into(client_user_icon, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            supportStartPostponedEnterTransition();
-                        }
-
-                        @Override
-                        public void onError() {
+        // Load Image of client user
+        Picasso.with(this)
+                .load(client_user_icon_url)
+                .placeholder(R.mipmap.profile_icon)
+                .error(R.mipmap.profile_icon)
+                .transform(new CircleTransform())
+                .into(client_user_icon, new Callback() {
+                    @Override
+                    public void onSuccess() {
                         supportStartPostponedEnterTransition();
-                        }
+                    }
 
-                    });
-        } else {
-            supportStartPostponedEnterTransition();
-        }
+                    @Override
+                    public void onError() {
+                    supportStartPostponedEnterTransition();
+                    }
 
-        sendRequestMessage();
+                });
+        //Load image of host
+        String host_user_icon_url = host_user.getIconURL();
+        Picasso.with(this)
+                .load(host_user_icon_url)
+                .placeholder(R.mipmap.profile_icon)
+                .error(R.mipmap.profile_icon)
+                .transform(new CircleTransform())
+                .into(host_user_icon);
 
-        TextView clientName = (TextView) findViewById(R.id.other_player_name);
-        Button cancel = (Button) findViewById(R.id.cancel_invite_dialog);
+        client_user_text.setText(client_user.getEmail().split("@")[0]);
+        host_user_text.setText(host_user.getEmail().split("@")[0]);
 
-        clientName.setText(client_user.getEmail());
-        cancel.setOnClickListener(cancelClick);
-
-
-        setEnterSharedElementCallback(new SharedElementCallback() {
-            @Override
-            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
-                Log.d(TAG, "onSharedElementEnd");
-                YoYo.with(Techniques.BounceInRight)
-                        .duration(1000)
-                        .repeat(1)
-                        .withListener(new Animator.AnimatorListener() {
+        YoYo.with(Techniques.FadeIn)
+                .duration(1000)
+                .withListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animator) {
-
+//                        client_user_text.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animator) {
-                        Log.d(TAG, "Item onAnimationEnd");
+                        Log.d(TAG," client user name onAnimationEnd");
+//                        client_user_text.setVisibility(View.VISIBLE);
+                        vs_icon.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.BounceIn)
+                                .duration(2000)
+                                .withListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        Log.d(TAG," VS anim finished onAnimationEnd");
+                                        host_user_icon.setVisibility(View.VISIBLE);
+                                        YoYo.with(Techniques.BounceInRight)
+                                                .duration(1000)
+                                                .playOn(host_user_icon);
+
+                                        host_user_text.setVisibility(View.VISIBLE);
+                                        YoYo.with(Techniques.BounceInUp)
+                                                .duration(1300)
+                                                .playOn(host_user_text);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                })
+                                .playOn(vs_icon);
+
                     }
 
                     @Override
@@ -133,18 +182,53 @@ public class InviteDialog extends AppCompatActivity {
                     public void onAnimationRepeat(Animator animator) {
 
                     }
+
                 })
-                        .playOn(client_user_icon);
-            }
-        });
+                .playOn(client_user_text);
+
+
+        cancel_button.setOnClickListener(cancelClick);
+
+        sendRequestMessage();
+
+//        setEnterSharedElementCallback(new SharedElementCallback() {
+//            @Override
+//            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+//                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+//                Log.d(TAG, "onSharedElementEnd");
+//                YoYo.with(Techniques.BounceInRight)
+//                        .duration(1000)
+//                        .repeat(1)
+//                        .withListener(new Animator.AnimatorListener() {
+//                    @Override
+//                    public void onAnimationStart(Animator animator) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationEnd(Animator animator) {
+//                        Log.d(TAG, "Item onAnimationEnd");
+//                    }
+//
+//                    @Override
+//                    public void onAnimationCancel(Animator animator) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animator animator) {
+//
+//                    }
+//                })
+//                        .playOn(client_user_icon);
+//            }
+//        });
+    }
+
+    public void loadClientIcon(){
 
     }
 
-    @Override
-    public void onEnterAnimationComplete() {
-        super.onEnterAnimationComplete();
-
-    }
 
     private View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
@@ -152,6 +236,12 @@ public class InviteDialog extends AppCompatActivity {
             closeDialog();
         }
     };
+
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+
+        return super.onCreateView(parent, name, context, attrs);
+    }
 
     public void sendRequestMessage(){
         Log.d(TAG, "Host!!! " + host_user.getEmail());
