@@ -1,13 +1,13 @@
 package com.app.elisoft.guru.Activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +19,8 @@ import com.app.elisoft.guru.TicTacToe.GameManager;
 import com.app.elisoft.guru.TicTacToe.Item;
 import com.app.elisoft.guru.TicTacToe.Sign;
 import com.app.elisoft.guru.Utils.Keys;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -39,7 +41,8 @@ public class GameActivity extends BaseActivity {
     User host_user, client_user, profile, turn;
     Sign myPiece, otherPiece;
 
-    AlertDialog resultScreen;
+    Dialog dialog;
+    AlertDialog exitScreen;
 
     String game_room;
     ImageView[][] matrixView;
@@ -148,26 +151,33 @@ public class GameActivity extends BaseActivity {
     }
 
 
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(parent, name, context, attrs);
-    }
-
     public void showGameResultDialog(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("Again", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //do things
-                        resetRound();
-                        sendMessage(Keys.MESSAGE_NEW_GAME, turn.getEmail());
-                        dialog.cancel();
-                    }
-                });
-        resultScreen = builder.create();
-        resultScreen.show();
+        dialog = new Dialog(this, R.style.FullHeightDialog);
 
+        dialog.setContentView(R.layout.result_dialog);
+
+        ImageView dialogImage = (ImageView) dialog.findViewById(R.id.result_dialog);
+        Button dialogButton = (Button) dialog.findViewById(R.id.result_dialog_again);
+
+        if (message.equals(Keys.GAME_WIN)) {
+            dialogImage.setImageResource(R.drawable.win_icon);
+        } else if (message.equals(Keys.GAME_LOSE)) {
+            dialogImage.setImageResource(R.drawable.loser_icon);
+        } else if (message.equals(Keys.GAME_DRAW)) {
+            dialogImage.setImageResource(R.drawable.draw_icon);
+        }
+        YoYo.with(Techniques.BounceIn)
+                .duration(1000)
+                .playOn(dialogImage);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetRound();
+                sendMessage(Keys.MESSAGE_NEW_GAME, turn.getEmail());
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     public void showExitDialog(String message) {
@@ -180,8 +190,8 @@ public class GameActivity extends BaseActivity {
                         finish();
                     }
                 });
-        resultScreen = builder.create();
-        resultScreen.show();
+        exitScreen = builder.create();
+        exitScreen.show();
 
     }
 
@@ -221,7 +231,7 @@ public class GameActivity extends BaseActivity {
                                     Log.d(TAG,"there is a winner here :)");
 
                                     sendMessage(Keys.MESSAGE_LAST_MOVE_WIN, String.valueOf(position));
-                                    showGameResultDialog("You Win!");
+                                    showGameResultDialog(Keys.GAME_WIN);
                                     addPoints(profile.getEmail());
                                     updateRibbonScore();
                                     turn = new User();
@@ -232,7 +242,7 @@ public class GameActivity extends BaseActivity {
                                         //ToDo: There is a draw here
                                         Log.d(TAG,"There is a draw here");
                                         sendMessage(Keys.MESSAGE_LAST_MOVE_DRAW, String.valueOf(position));
-                                        showGameResultDialog("Draw");
+                                        showGameResultDialog(Keys.GAME_DRAW);
                                         addPoints("draw");
                                         updateRibbonScore();
                                         turn = new User();
@@ -425,7 +435,7 @@ public class GameActivity extends BaseActivity {
                         updateGameBoard();
                         updateRibbonScore();
                         turn = new User();
-                        showGameResultDialog("You Lose!");
+                        showGameResultDialog(Keys.GAME_LOSE);
                     }
                 } else {
                     if (messageEvent instanceof MessageEvent.LastMoveRequestDraw) {
@@ -437,7 +447,7 @@ public class GameActivity extends BaseActivity {
                             updateRibbonScore();
                             updateGameBoard();
                             turn = new User();
-                            showGameResultDialog("Draw");
+                            showGameResultDialog(Keys.GAME_DRAW);
                         }
                     } else {
                         if (messageEvent instanceof MessageEvent.NewGameRequest) {
@@ -447,7 +457,7 @@ public class GameActivity extends BaseActivity {
                                 turn = host_user;
                             } else turn = client_user;
                             initRibbon();
-                            resultScreen.cancel();
+                            dialog.dismiss();
                             resetRoundWithoutCoin();
                         } else {
                             if (messageEvent instanceof MessageEvent.QuitRequest) {

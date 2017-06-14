@@ -52,6 +52,7 @@ public class GotInviteDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_got_invite);
 
+        supportPostponeEnterTransition();
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleGotInvite");

@@ -20,6 +20,10 @@ public class Keys {
     public static final String MESSAGE_LAST_MOVE_DRAW = "last_move_draw";
     public static final String MESSAGE_QUIT = "quit";
 
+    public static final String GAME_WIN = "win";
+    public static final String GAME_LOSE = "lose";
+    public static final String GAME_DRAW = "draw";
+
     public static final String RESPONSE_AGREE = "agree";
     public static final String RESPONSE_DECLINE = "decline";
 }
