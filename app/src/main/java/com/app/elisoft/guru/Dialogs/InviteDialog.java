@@ -286,8 +286,6 @@ public class InviteDialog extends AppCompatActivity {
         game_room = UUID.randomUUID().toString();
         Log.d(TAG, "uuid: " + game_room);
 
-        title = (TextView) findViewById(R.id.title_invite);
-
         Intent intentNew = new Intent(InviteDialog.this, SendMessageToDevice.class);
         intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
         intentNew.putExtra("host_uid", host_user.getUid());
@@ -330,14 +328,9 @@ public class InviteDialog extends AppCompatActivity {
             String response = ((MessageEvent.OnAcceptInvite) messageEvent).getMessage();
             Log.d(TAG, "GotInviteDialog catch OnAcceptInvite - " + response);
             if (response.equals(Keys.RESPONSE_AGREE)) {
-                // need to open new screen
-                title.setText("Challenge accepted :)");
                 startGame();
             }else {
-                //            removeGameRoom();
-                title.setText("He is chicken - decline");
-                //Need to delete game room
-                //Need to prompt the user about decline!
+
             }
 
         }
