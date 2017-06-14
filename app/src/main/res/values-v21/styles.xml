@@ -14,6 +14,6 @@
         <item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>
 
         <item name="android:windowEnterTransition">@transition/fade_element</item>
-        <item name="android:windowExitTransition">@transition/slide_element</item>
+
     </style>
 </resources>

@@ -6,16 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Transition;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.elisoft.guru.Activity.GameActivity;
@@ -40,7 +37,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
 import java.util.UUID;
 
 public class InviteDialog extends AppCompatActivity {
@@ -58,6 +54,7 @@ public class InviteDialog extends AppCompatActivity {
     private ImageView client_user_icon, host_user_icon, vs_icon;
     private TextView client_user_text, host_user_text;
     private Button cancel_button;
+    private RelativeLayout spinner_container;
     private SpinnerLoading spinner;
 
 
@@ -80,6 +77,7 @@ public class InviteDialog extends AppCompatActivity {
 
         supportPostponeEnterTransition();
 
+
         client_user_icon = (ImageView) findViewById(R.id.invite_client_icon);
         host_user_icon = (ImageView) findViewById(R.id.invite_host_icon);
         vs_icon = (ImageView) findViewById(R.id.invite_vs_icon);
@@ -88,6 +86,8 @@ public class InviteDialog extends AppCompatActivity {
         host_user_text = (TextView) findViewById(R.id.invite_host_name);
 
         cancel_button = (Button) findViewById(R.id.cancel_invite_dialog);
+
+        spinner_container = (RelativeLayout) findViewById(R.id.spinner_container);
 
         spinner = (SpinnerLoading) findViewById(R.id.spinner);
         spinner.setPaintMode(1);
@@ -98,9 +98,10 @@ public class InviteDialog extends AppCompatActivity {
         host_user_icon.setVisibility(View.INVISIBLE);
         host_user_text.setVisibility(View.INVISIBLE);
         vs_icon.setVisibility(View.INVISIBLE);
-        spinner.setVisibility(View.INVISIBLE);
+        spinner_container.setVisibility(View.INVISIBLE);
 
         String client_user_icon_url = client_user.getIconURL();
+        if (client_user_icon_url == null) client_user_icon_url = "a";
         // Load Image of client user
         Picasso.with(this)
                 .load(client_user_icon_url)
@@ -121,6 +122,7 @@ public class InviteDialog extends AppCompatActivity {
                 });
         //Load image of host
         String host_user_icon_url = host_user.getIconURL();
+        if (host_user_icon_url == null) host_user_icon_url = "a";
         Picasso.with(this)
                 .load(host_user_icon_url)
                 .placeholder(R.mipmap.profile_icon)
@@ -172,9 +174,11 @@ public class InviteDialog extends AppCompatActivity {
                                                     @Override
                                                     public void onAnimationEnd(Animator animator) {
                                                         Log.d(TAG," Host anim finished onAnimationEnd");
-//                                                        spinner.setVisibility(View.VISIBLE);
-//                                                        spinner.setCircleRadius(90);
-//                                                        spinner.startAnimation();
+                                                        spinner_container.setVisibility(View.VISIBLE);
+                                                        YoYo.with(Techniques.FadeIn)
+                                                                .duration(700)
+                                                                .playOn(spinner_container);
+
                                                     }
 
                                                     @Override

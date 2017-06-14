@@ -48,6 +48,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Client Name"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorBlue"
                     />
 
             </LinearLayout>
@@ -81,6 +83,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Host Name"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorRed"
                     />
 
             </LinearLayout>
@@ -89,15 +93,23 @@
 
         </RelativeLayout>
 
-        <com.lusfold.spinnerloading.SpinnerLoading
-            android:id="@+id/spinner"
-            android:layout_marginTop="50dp"
+        <RelativeLayout
+            android:id="@+id/spinner_container"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/anim_container"/>
+            android:layout_below="@+id/anim_container"
+            android:layout_marginTop="50dp">
+
+            <com.lusfold.spinnerloading.SpinnerLoading
+                android:id="@+id/spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </RelativeLayout>
+
+
 
         <Button
             android:id="@+id/cancel_invite_dialog"
