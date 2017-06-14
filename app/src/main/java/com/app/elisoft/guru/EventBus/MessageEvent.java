@@ -44,6 +44,16 @@ public class MessageEvent {
             return message;
         }
     }
+    public static class OnDeclineInvite extends MessageEvent {
+        String message;
+        public OnDeclineInvite(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+
 
     public static class UserArrive extends MessageEvent {
         String message;

@@ -1,6 +1,7 @@
 package com.app.elisoft.guru.Dialogs;
 
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.elisoft.guru.Activity.GameActivity;
@@ -17,9 +19,13 @@ import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.GameRoom;
 import com.app.elisoft.guru.Table.User;
 import com.app.elisoft.guru.Utils.Keys;
+import com.app.elisoft.guru.Views.CircleTransform;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,8 +41,11 @@ public class GotInviteDialog extends AppCompatActivity {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    TextView description;
+    TextView host_name, title;
+    ImageView host_icon;
     Button accept, decline;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +70,79 @@ public class GotInviteDialog extends AppCompatActivity {
 
         accept = (Button) findViewById(R.id.accept_invite_dialog);
         decline = (Button) findViewById(R.id.cancel_invite_dialog);
-        description = (TextView) findViewById(R.id.other_player_name);
 
-        description.setText("by: " + host_user.getEmail().split("@")[0]);
+        title = (TextView)  findViewById(R.id.got_invite_title);
+        host_name = (TextView) findViewById(R.id.got_invite_client_name);
+        host_icon = (ImageView) findViewById(R.id.got_invite_host_icon);
+
+        String host_user_icon_url = host_user.getIconURL();
+        if (host_user_icon_url == null) host_user_icon_url = "a";
+        Picasso.with(this)
+                .load(host_user_icon_url)
+                .placeholder(R.mipmap.profile_icon)
+                .error(R.mipmap.profile_icon)
+                .transform(new CircleTransform())
+                .into(host_icon);
+
+        host_name.setText(host_user.getEmail().split("@")[0]);
+
+        host_name.setVisibility(View.INVISIBLE);
+        host_icon.setVisibility(View.INVISIBLE);
+        title.setVisibility(View.INVISIBLE);
+
+
+        host_icon.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.ZoomInDown)
+                .duration(1000)
+                .withListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        host_name.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.Tada)
+                                .duration(1000)
+                                .withListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+                                        title.setVisibility(View.VISIBLE);
+                                        YoYo.with(Techniques.FlipInX)
+                                                .duration(600)
+                                                .playOn(title);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
+                                    }
+                                })
+                                .playOn(host_name);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+
+                    }
+                }).playOn(host_icon);
+
 
         accept.setOnClickListener(new View.OnClickListener() {
             @Override

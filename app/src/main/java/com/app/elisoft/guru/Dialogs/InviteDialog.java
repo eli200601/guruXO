@@ -52,7 +52,7 @@ public class InviteDialog extends AppCompatActivity {
     private EventBus eventBus = EventBus.getDefault();
 
     private ImageView client_user_icon, host_user_icon, vs_icon;
-    private TextView client_user_text, host_user_text;
+    private TextView client_user_text, host_user_text, decline_text;
     private Button cancel_button;
     private RelativeLayout spinner_container;
     private SpinnerLoading spinner;
@@ -84,6 +84,7 @@ public class InviteDialog extends AppCompatActivity {
 
         client_user_text = (TextView) findViewById(R.id.invite_client_name);
         host_user_text = (TextView) findViewById(R.id.invite_host_name);
+        decline_text = (TextView) findViewById(R.id.decline_text);
 
         cancel_button = (Button) findViewById(R.id.cancel_invite_dialog);
 
@@ -99,6 +100,7 @@ public class InviteDialog extends AppCompatActivity {
         host_user_text.setVisibility(View.INVISIBLE);
         vs_icon.setVisibility(View.INVISIBLE);
         spinner_container.setVisibility(View.INVISIBLE);
+        decline_text.setVisibility(View.INVISIBLE);
 
         String client_user_icon_url = client_user.getIconURL();
         if (client_user_icon_url == null) client_user_icon_url = "a";
@@ -333,6 +335,12 @@ public class InviteDialog extends AppCompatActivity {
 
             }
 
+        } else if (messageEvent instanceof MessageEvent.OnDeclineInvite) {
+            spinner_container.setVisibility(View.INVISIBLE);
+            decline_text.setVisibility(View.VISIBLE);
+            YoYo.with(Techniques.FadeIn)
+                    .duration(300)
+                    .playOn(decline_text);
         }
     }
 

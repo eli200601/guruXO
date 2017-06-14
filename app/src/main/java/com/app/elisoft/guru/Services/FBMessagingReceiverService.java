@@ -41,10 +41,19 @@ public class FBMessagingReceiverService extends FirebaseMessagingService {
                 // response for Invitation
                 Log.d(TAG, "This is response invite received message");
                 if (date.get("message") != null) {
-                    Log.d(TAG, "The client accepted your offer!!!");
-                    MessageEvent.OnAcceptInvite event;
-                    event = new MessageEvent.OnAcceptInvite(date.get("message").toString());
-                    bus.post(event);
+                    if (date.get("message").equals(Keys.RESPONSE_DECLINE)) {
+                        Log.d(TAG, "This is RESPONSE_DECLINE received message");
+                        MessageEvent.OnDeclineInvite event;
+
+                        event = new MessageEvent.OnDeclineInvite(date.get("message").toString());
+                        bus.post(event);
+                    } else {
+                        Log.d(TAG, "The client accepted your offer!!!");
+                        MessageEvent.OnAcceptInvite event;
+                        event = new MessageEvent.OnAcceptInvite(date.get("message").toString());
+                        bus.post(event);
+                    }
+
                 }
             } else {
                 if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_ARRIVE)) {

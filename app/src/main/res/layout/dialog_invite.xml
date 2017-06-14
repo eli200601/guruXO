@@ -92,7 +92,17 @@
 
 
         </RelativeLayout>
-
+        <TextView
+            android:id="@+id/decline_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="30dp"
+            android:text="The user decline"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorRed"/>
         <RelativeLayout
             android:id="@+id/spinner_container"
             android:layout_centerInParent="true"
