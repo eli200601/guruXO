@@ -3,6 +3,16 @@ package com.app.elisoft.guru.EventBus;
 
 public class MessageEvent {
 
+    String sender;
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
     public static class OnInviteToPlay extends MessageEvent {
         String hostName;
         String host_id;
@@ -39,6 +49,7 @@ public class MessageEvent {
         String message;
         public OnAcceptInvite(String message) {
             this.message = message;
+
         }
         public String getMessage() {
             return message;
@@ -57,8 +68,9 @@ public class MessageEvent {
 
     public static class UserArrive extends MessageEvent {
         String message;
-        public UserArrive(String message) {
+        public UserArrive(String message, String sender) {
             this.message = message;
+            this.sender = sender;
         }
         public String getMessage() {
             return message;
@@ -67,8 +79,9 @@ public class MessageEvent {
 
     public static class MoveRequest extends MessageEvent {
         String message;
-        public MoveRequest(String message) {
+        public MoveRequest(String message, String sender) {
             this.message = message;
+            this.sender = sender;
         }
         public String getMessage() {
             return message;
@@ -77,8 +90,9 @@ public class MessageEvent {
 
     public static class LastMoveRequestWin extends MessageEvent {
         String message;
-        public LastMoveRequestWin(String message) {
+        public LastMoveRequestWin(String message, String sender) {
             this.message = message;
+            this.sender = sender;
         }
         public String getMessage() {
             return message;
@@ -86,8 +100,9 @@ public class MessageEvent {
     }
     public static class LastMoveRequestDraw extends MessageEvent {
         String message;
-        public LastMoveRequestDraw(String message) {
+        public LastMoveRequestDraw(String message, String sender) {
             this.message = message;
+            this.sender = sender;
         }
         public String getMessage() {
             return message;
@@ -95,8 +110,9 @@ public class MessageEvent {
     }
     public static class NewGameRequest extends MessageEvent {
         String message;
-        public NewGameRequest(String message) {
+        public NewGameRequest(String message, String sender) {
             this.message = message;
+            this.sender = sender;
         }
         public String getMessage() {
             return message;
@@ -104,8 +120,9 @@ public class MessageEvent {
     }
     public static class QuitRequest extends MessageEvent {
         String message;
-        public QuitRequest(String message) {
+        public QuitRequest(String message, String sender) {
             this.message = message;
+            this.sender = sender;
         }
         public String getMessage() {
             return message;

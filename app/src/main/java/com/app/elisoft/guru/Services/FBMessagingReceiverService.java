@@ -59,38 +59,38 @@ public class FBMessagingReceiverService extends FirebaseMessagingService {
                 if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_ARRIVE)) {
                     Log.d(TAG, "MESSAGE_ARRIVE");
                     MessageEvent.UserArrive event;
-                    event = new MessageEvent.UserArrive(date.get("message").toString());
+                    event = new MessageEvent.UserArrive(date.get("message").toString(), date.get("host_name").toString());
                     bus.post(event);
                 } else {
                     if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_MOVE)) {
                         Log.d(TAG, "MESSAGE_MOVE");
                         MessageEvent.MoveRequest event;
-                        event = new MessageEvent.MoveRequest(date.get("message").toString());
+                        event = new MessageEvent.MoveRequest(date.get("message").toString(), date.get("host_name").toString());
                         bus.post(event);
 
                     } else {
                         if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_LAST_MOVE_WIN)) {
                             Log.d(TAG, "MESSAGE_LAST_MOVE_WIN");
                             MessageEvent.LastMoveRequestWin event;
-                            event = new MessageEvent.LastMoveRequestWin(date.get("message").toString());
+                            event = new MessageEvent.LastMoveRequestWin(date.get("message").toString(), date.get("host_name").toString());
                             bus.post(event);
                         } else{
                             if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_LAST_MOVE_DRAW)) {
                                 Log.d(TAG, "MESSAGE_LAST_MOVE_DRAW");
                                 MessageEvent.LastMoveRequestDraw event;
-                                event = new MessageEvent.LastMoveRequestDraw(date.get("message").toString());
+                                event = new MessageEvent.LastMoveRequestDraw(date.get("message").toString(), date.get("host_name").toString());
                                 bus.post(event);
                             } else {
                                 if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_NEW_GAME)) {
                                     Log.d(TAG, "MESSAGE_NEW_GAME");
                                     MessageEvent.NewGameRequest event;
-                                    event = new MessageEvent.NewGameRequest(date.get("message").toString());
+                                    event = new MessageEvent.NewGameRequest(date.get("message").toString(), date.get("host_name").toString());
                                     bus.post(event);
                                 } else {
                                     if (date.get(Keys.REQUEST_TYPE).equals(Keys.MESSAGE_QUIT)) {
                                         Log.d(TAG, "MESSAGE_QUIT");
                                         MessageEvent.QuitRequest event;
-                                        event = new MessageEvent.QuitRequest(date.get("message").toString());
+                                        event = new MessageEvent.QuitRequest(date.get("message").toString(), date.get("host_name").toString());
                                         bus.post(event);
 
                                     }

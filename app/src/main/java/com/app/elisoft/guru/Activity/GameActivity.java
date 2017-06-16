@@ -199,7 +199,8 @@ public class GameActivity extends BaseActivity {
 
     public void sendMessage(String type, String message) {
         Intent intentNew = new Intent(GameActivity.this, SendMessageToDevice.class);
-        intentNew.putExtra("host_name", host_user.getEmail().split("@")[0]);
+        //host_name is sender
+        intentNew.putExtra("host_name", profile.getEmail());
         intentNew.putExtra("host_uid", host_user.getUid());
         intentNew.putExtra("address_prefix", "room_");
         intentNew.putExtra("client_uid", game_room);
@@ -477,8 +478,14 @@ public class GameActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MessageEvent messageEvent) {
+        Log.d(TAG, "message sender: " + messageEvent.getSender());
+        if (messageEvent.getSender().equals(profile.getEmail())) {
+            Log.d(TAG, "This message is not for me !!!");
+            return;
+        }
         if (messageEvent instanceof MessageEvent.UserArrive) {
             //Host arrived (This is client  device code)
+//            String sender = (MessageEvent.UserArrive) messageEvent).getMessage();
             Log.d(TAG, "Host arrived (This is client  device code) | its turn: " + ((MessageEvent.UserArrive) messageEvent).getMessage());
             String turnString = ((MessageEvent.UserArrive) messageEvent).getMessage();
             if (turnString.equals(host_user.getEmail())) {
