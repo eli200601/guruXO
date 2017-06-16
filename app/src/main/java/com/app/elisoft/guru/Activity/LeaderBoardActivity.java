@@ -24,12 +24,14 @@ public class LeaderBoardActivity extends BaseActivity {
     TextView one_name, one_win, one_lose, one_draw;
     TextView two_name, two_win, two_lose, two_draw;
     TextView three_name, three_win, three_lose, three_draw;
+    TextView user_name;
 
     ImageView one_icon, two_icon, three_icon;
 
     User one;
     User two;
     User three;
+    User me;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +49,11 @@ public class LeaderBoardActivity extends BaseActivity {
         one = topThree.get(0);
         two = topThree.get(1);
         three = topThree.get(2);
+        me = topThree.get(3);
+
 
         initView();
+        user_name.setText("hi, " + me.getEmail().split("@")[0]);
 
         one_name.setText(one.getEmail().split("@")[0]);
         one_win.setText("Wins: " + one.getMyWins());
@@ -95,6 +100,7 @@ public class LeaderBoardActivity extends BaseActivity {
     public void initView() {
 
         exit_button = (ImageView) findViewById(R.id.exit_button);
+        user_name = (TextView) findViewById(R.id.user_name_title);
 
         one_icon = (ImageView) findViewById(R.id.icon_user_first_place);
         two_icon = (ImageView) findViewById(R.id.icon_user_second_place);

@@ -5,7 +5,6 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_100"
     android:orientation="vertical"
     android:weightSum="4">
 
@@ -13,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2.5"
+        android:background="@color/colorAccent"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -30,17 +30,30 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/title_bottom_margin"
             android:text="@string/login_main_title"
+            android:textColor="@color/colorPrimaryText"
+            android:textStyle="bold"
             android:theme="@style/ThemeOverlay.MyTitleText" />
+
+        <ImageView
+
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/ic_logo"
+
+            />
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:id="@+id/detail"
+            style="@style/ThemeOverlay.MyTextDetail"
+            android:text="Play the classic Tic Tac Toe game\nwith your best friends on-line." />
 
         <TextView
             android:id="@+id/status"
             style="@style/ThemeOverlay.MyTextDetail"
             android:text="@string/signed_out" />
 
-        <TextView
-            android:id="@+id/detail"
-            style="@style/ThemeOverlay.MyTextDetail"
-            tools:text="Firebase User ID: 123456789abc" />
+
 
     </LinearLayout>
 
@@ -49,7 +62,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1.5"
-        android:background="@color/grey_300"
+        android:background="@color/colorPrimary"
         android:gravity="center_vertical"
         >
 
@@ -95,6 +108,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/sign_in"
+                android:textColor="@color/colorPrimaryText"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
             <Button
@@ -103,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/create_account"
+                android:textColor="@color/colorPrimaryText"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
             <!---->
         </LinearLayout>
@@ -145,6 +160,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:text="@string/sign_out"
+                android:textColor="@color/colorPrimaryText"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
             <Button
@@ -154,6 +170,7 @@
                 android:layout_weight="1.0"
                 android:maxLines="1"
                 android:text="@string/verify_email"
+                android:textColor="@color/colorPrimaryText"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
             <Button
@@ -162,6 +179,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:text="Lobby"
+                android:textColor="@color/colorPrimaryText"
                 android:theme="@style/ThemeOverlay.MyDarkButton"
 
                 />

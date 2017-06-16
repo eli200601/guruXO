@@ -42,7 +42,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private TextView mStatusTextView;
-    private TextView mDetailTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
 //    private SignInButton mGoogleSingIn;
@@ -62,7 +61,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
-        mDetailTextView = (TextView) findViewById(R.id.detail);
+
         mEmailField = (EditText) findViewById(R.id.field_email);
         mPasswordField = (EditText) findViewById(R.id.field_password);
 //        mGoogleSingIn = (SignInButton) findViewById(R.id.login_with_google);
@@ -204,7 +203,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (user != null) {
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
                     user.getEmail(), user.isEmailVerified()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
+
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
@@ -217,7 +216,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         } else {
             mStatusTextView.setText(R.string.signed_out);
-            mDetailTextView.setText(null);
+
 
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);

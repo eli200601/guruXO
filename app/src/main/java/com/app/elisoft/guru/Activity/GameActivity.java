@@ -19,17 +19,20 @@ import com.app.elisoft.guru.TicTacToe.GameManager;
 import com.app.elisoft.guru.TicTacToe.Item;
 import com.app.elisoft.guru.TicTacToe.Sign;
 import com.app.elisoft.guru.Utils.Keys;
+import com.app.elisoft.guru.Views.CircleTransform;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
+import static com.app.elisoft.guru.TicTacToe.Sign.X;
 
 
 public class GameActivity extends BaseActivity {
@@ -46,8 +49,11 @@ public class GameActivity extends BaseActivity {
 
     String game_room;
     ImageView[][] matrixView;
-    TextView title, desc, turnTitle, score;
+    TextView turnTitle, score_client, score_host, score_draw;
     ImageView exit_button;
+
+    ImageView client_user_icon, host_user_icon, client_sign, host_sign;
+    TextView client_user_text, host_user_text;
 
     int myScore, otherScore, draws;
 
@@ -99,7 +105,7 @@ public class GameActivity extends BaseActivity {
             otherPiece = Sign.O;
             sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
             initRibbon();
-            sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
+//            sendMessage(Keys.MESSAGE_ARRIVE, turn.getEmail());
         } else {
             myPiece = Sign.O;
             otherPiece = Sign.X;
@@ -111,22 +117,76 @@ public class GameActivity extends BaseActivity {
 
     private void initRibbon() {
 
-        title = (TextView) findViewById(R.id.status_title);
-        desc = (TextView) findViewById(R.id.sub_title);
-        turnTitle = (TextView) findViewById(R.id.turn_title);
-        score = (TextView) findViewById(R.id.score_title);
+//        title = (TextView) findViewById(R.id.status_title);
+//        desc = (TextView) findViewById(R.id.sub_title);
+        client_sign = (ImageView) findViewById(R.id.game_client_sign_icon);
+        host_sign = (ImageView) findViewById(R.id.game_host_sign_icon);
 
+        client_user_icon = (ImageView) findViewById(R.id.invite_client_icon);
+        host_user_icon = (ImageView) findViewById(R.id.invite_host_icon);
+        client_user_text = (TextView) findViewById(R.id.invite_client_name);
+        host_user_text = (TextView) findViewById(R.id.invite_host_name);
+
+        turnTitle = (TextView) findViewById(R.id.turn_title);
+        score_client = (TextView) findViewById(R.id.score_client_title);
+        score_host = (TextView) findViewById(R.id.score_host_title);
+        score_draw = (TextView) findViewById(R.id.score_title_draw);
+
+        //Setting up user icons
+        String client_user_icon_url = client_user.getIconURL();
+        if (client_user_icon_url == null) client_user_icon_url = "a";
+        Picasso.with(this)
+                .load(client_user_icon_url)
+                .placeholder(R.mipmap.profile_icon)
+                .error(R.mipmap.profile_icon)
+                .transform(new CircleTransform())
+                .into(client_user_icon);
+
+        String host_user_icon_url = host_user.getIconURL();
+        if (host_user_icon_url == null) host_user_icon_url = "a";
+        Picasso.with(this)
+                .load(host_user_icon_url)
+                .placeholder(R.mipmap.profile_icon)
+                .error(R.mipmap.profile_icon)
+                .transform(new CircleTransform())
+                .into(host_user_icon);
+
+        //Setting up signs
+        if (profile.getEmail().equals(client_user.getEmail())) {
+            Sign my_Piece = myPiece;
+            if (my_Piece.equals(X)){
+                client_sign.setImageResource(R.drawable.x_icon);
+                host_sign.setImageResource(R.drawable.o_icon);
+            } else {
+                client_sign.setImageResource(R.drawable.o_icon);
+                host_sign.setImageResource(R.drawable.x_icon);
+            }
+        }
+        else {
+            Sign my_Piece = myPiece;
+            if (my_Piece.equals(X)){
+                client_sign.setImageResource(R.drawable.o_icon);
+                host_sign.setImageResource(R.drawable.x_icon);
+            } else {
+                client_sign.setImageResource(R.drawable.x_icon);
+                host_sign.setImageResource(R.drawable.o_icon);
+            }
+        }
+
+        //Setting up user names
+        client_user_text.setText(client_user.getEmail().split("@")[0]);
+        host_user_text.setText(host_user.getEmail().split("@")[0]);
 
         //Setting up title
-        String otherName;
-        if (profile.getEmail().equals(client_user.getEmail())) otherName = host_user.getEmail().split("@")[0];
-            else otherName = client_user.getEmail().split("@")[0];
-        String titleS = profile.getEmail().split("@")[0] + " Vs " + otherName;
-        title.setText(titleS);
+//        String otherName;
+//        if (profile.getEmail().equals(client_user.getEmail())) otherName = host_user.getEmail().split("@")[0];
+//            else otherName = client_user.getEmail().split("@")[0];
+//        String titleS = profile.getEmail().split("@")[0] + " Vs " + otherName;
+//        title.setText(titleS);
 
         //Setting up description
-        String descS = "My Sign is: " + myPiece.toString();
-        desc.setText(descS);
+//        String descS = "My Sign is: " + myPiece.toString();
+//        desc.setText(descS);
 
         //Setting up Score
         updateRibbonScore();
@@ -306,10 +366,23 @@ public class GameActivity extends BaseActivity {
     }
 
     public void updateRibbonScore(){
-        String sep = " - ";
-        String scoreString;
-        scoreString = String.valueOf(myScore) + sep + String.valueOf(otherScore) + " Draw's: " + String.valueOf(draws);
-        score.setText(scoreString);
+        String sep = " : ";
+        String scoreClient, scoreHost, drawString;
+//        scoreString = String.valueOf(myScore) + sep + String.valueOf(otherScore);
+        drawString = " Draw's: " + String.valueOf(draws);
+//        score.setText(scoreString);
+        if (profile.getEmail().equals(client_user.getEmail())) {
+            //i am client
+            score_client.setText(String.valueOf(myScore));
+            score_host.setText(String.valueOf(otherScore));
+        }
+        else {
+            //i am host
+            score_client.setText(String.valueOf(otherScore));
+            score_host.setText(String.valueOf(myScore));
+
+        }
+        score_draw.setText(drawString);
     }
 
     public void updateGameBoard(){

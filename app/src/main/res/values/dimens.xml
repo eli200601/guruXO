@@ -9,6 +9,8 @@
     <dimen name="online_indication">20dp</dimen>
 
     <dimen name="user_icon_size">60dp</dimen>
+    <dimen name="user_icon_size_in_game">50dp</dimen>
+    <dimen name="vs_icon_size_in_game">40dp</dimen>
     <dimen name="user_icon_size_larger">80dp</dimen>
 
     <dimen name="user_status_padding">2dp</dimen>

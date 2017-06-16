@@ -262,6 +262,7 @@ public class MainActivity extends BaseActivity {
         orederList.add(one);
         orederList.add(two);
         orederList.add(three);
+        orederList.add(currentUserLocal);
 
         for (User user: orederList){
             Log.d(TAG, "Top 3: " + user.getEmail());

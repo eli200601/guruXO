@@ -28,6 +28,7 @@
         <activity
             android:name=".Activity.LoginActivity"
             android:label="Login to Guru"
+            android:theme="@style/AppTheme.NoTitleHeader"
             android:screenOrientation="portrait"
             android:supportsRtl="false"
             android:layoutDirection="ltr"

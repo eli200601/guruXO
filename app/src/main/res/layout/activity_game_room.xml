@@ -17,50 +17,158 @@
         android:background="@color/colorPrimary"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/status_title"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/anim_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp"
             android:layout_alignParentTop="true"
-            android:layout_margin="10dp"
-            android:text="Status:"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/sub_title"
+            android:layout_centerVertical="true">
+
+            <ImageView
+                android:id="@+id/game_client_sign_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_toLeftOf="@+id/client_con"
+                android:src="@drawable/x_icon"
+                android:layout_centerInParent="true"/>
+
+            <LinearLayout
+                android:id="@+id/client_con"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignRight="@+id/game_vs_icon"
+                android:layout_marginEnd="60dp">
+
+                <ImageView
+                    android:id="@+id/invite_client_icon"
+                    android:layout_width="@dimen/user_icon_size_in_game"
+                    android:layout_height="@dimen/user_icon_size_in_game"
+                    android:transitionName="user_icon"
+                    android:layout_gravity="center"
+                    app:srcCompat="@mipmap/profile_icon"
+                    />
+                <TextView
+                    android:id="@+id/invite_client_name"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLength="12"
+                    android:text="Client Name"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorBlue"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/game_vs_icon"
+                android:layout_width="@dimen/vs_icon_size_in_game"
+                android:layout_height="@dimen/vs_icon_size_in_game"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/vs_icon"/>
+
+            <ImageView
+                android:id="@+id/game_host_sign_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_toRightOf="@+id/game_host_con"
+                android:src="@drawable/o_icon"
+                android:layout_centerInParent="true"/>
+
+            <LinearLayout
+                android:id="@+id/game_host_con"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignLeft="@+id/game_vs_icon"
+                android:layout_marginStart="60dp">
+
+                <ImageView
+                    android:id="@+id/invite_host_icon"
+                    android:layout_width="@dimen/user_icon_size_in_game"
+                    android:layout_height="@dimen/user_icon_size_in_game"
+                    android:layout_gravity="center"
+                    app:srcCompat="@mipmap/profile_icon"
+                    />
+
+                <TextView
+                    android:id="@+id/invite_host_name"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLength="12"
+                    android:text="Host Name"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorRed"
+                    />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/score_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/status_title"
-            android:layout_margin="10dp"
-            android:text="Description:"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:layout_below="@+id/anim_container"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/score_client_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="0"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="     :     "/>
+            <TextView
+                android:id="@+id/score_host_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="0"/>
+
+
+        </LinearLayout>
+
 
         <TextView
-            android:id="@+id/score_title"
+            android:id="@+id/score_title_draw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sub_title"
-            android:layout_marginBottom="10dp"
-            android:layout_margin="10dp"
+            android:layout_below="@+id/score_con"
+            android:layout_marginTop="5dp"
+
+            android:layout_centerInParent="true"
+            android:text="Draws: "
             android:textColor="@color/colorPrimaryText"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:text="Score"/>
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/turn_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryText"
+            android:layout_marginLeft="10dp"
             android:text="Turn"
             android:textSize="14dp"/>
 
@@ -76,15 +184,6 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
-        <!--<ImageView-->
-            <!--android:id="@+id/refresh_button"-->
-            <!--android:layout_width="25dp"-->
-            <!--android:layout_height="25dp"-->
-            <!--android:src="@mipmap/refresh_icon"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_alignParentEnd="true" />-->
 
     </RelativeLayout>
 
