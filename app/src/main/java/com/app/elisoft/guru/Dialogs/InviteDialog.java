@@ -336,6 +336,7 @@ public class InviteDialog extends AppCompatActivity {
             }
 
         } else if (messageEvent instanceof MessageEvent.OnDeclineInvite) {
+            Log.d(TAG, "User Decline :(");
             spinner_container.setVisibility(View.INVISIBLE);
             decline_text.setVisibility(View.VISIBLE);
             YoYo.with(Techniques.FadeIn)

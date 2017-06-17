@@ -467,13 +467,7 @@ public class GameActivity extends BaseActivity {
             mDatabase.child("users").child(profile.getUid()).child("myLoses").setValue(String.valueOf(myLoses));
             mDatabase.child("users").child(profile.getUid()).child("myDraws").setValue(String.valueOf(myDraws));
         }
-
-
-
-
-
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)

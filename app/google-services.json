@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "188966457233-sunquv7lh3jraf2lh9lk2cg5b2sp61li.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.elisoft.guru",
+            "certificate_hash": "d7fd4155a004cd96556025be419f9d97cae865a4"
+          }
+        },
+        {
           "client_id": "188966457233-849gij0t8d38f63f6p38a9q401dnic0h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

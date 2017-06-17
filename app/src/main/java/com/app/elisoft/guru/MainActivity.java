@@ -28,6 +28,7 @@ import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.Recycler.RecyclerAdapter;
 import com.app.elisoft.guru.Table.User;
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -73,7 +74,7 @@ public class MainActivity extends BaseActivity {
     private ImageView logoutButton;
     private ImageView refresh_button;
     private ImageView cup_button;
-
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,7 @@ public class MainActivity extends BaseActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -273,6 +274,15 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    private void logUser() {
+        // TODO: Use the current user's information
+        // You can call any combination of these three methods
+        Crashlytics.setUserIdentifier(currentUser.getUid());
+        Crashlytics.setUserEmail(currentUser.getEmail());
+        Crashlytics.setUserName(currentUser.getEmail().split("@")[0]);
+    }
+
+
     private View.OnClickListener listenerRefresh = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -285,6 +295,9 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             hideProgressDialog();
+            // TODO: Move this to where you establish a user session
+            logUser();
+            logAnalytic();
             usersList.clear();
             Log.d(TAG ,"" + dataSnapshot.getChildrenCount());
             if (currentUser!= null ) {
@@ -311,6 +324,13 @@ public class MainActivity extends BaseActivity {
 
         }
     };
+
+    private void logAnalytic(){
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, currentUser.getUid());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, currentUser.getEmail().split("@")[0]);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
 
 
     private User getUserFromDB(FirebaseUser firebaseUser) {
