@@ -329,6 +329,7 @@ public class MainActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, currentUser.getUid());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, currentUser.getEmail().split("@")[0]);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
