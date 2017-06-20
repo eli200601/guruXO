@@ -30,44 +30,78 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/logout_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@mipmap/logout_icon"
-            android:layout_margin="10dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:orientation="vertical"
+            android:weightSum="4"
+            android:gravity="center"
+            >
 
-        <ImageView
-            android:id="@+id/cup_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_margin="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/logout_button"
-            android:src="@drawable/cup"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <ImageView
+                    android:id="@+id/logout_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/logout_icon"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
 
-        <ImageView
-            android:id="@+id/refresh_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@mipmap/refresh_icon"
-            android:layout_margin="10dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-        
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/cup_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/cup" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/vs_com_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/pc_icon_vs" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/refresh_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/refresh_icon" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+
         <ImageView
             android:layout_width="160dp"
             android:layout_height="100dp"
-            android:paddingTop="10dp"
-            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            android:src="@drawable/logo2"
-            />
+            android:paddingTop="10dp"
+            android:src="@drawable/logo2" />
 
     </RelativeLayout>
 

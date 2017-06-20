@@ -12,13 +12,13 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.elisoft.guru.Activity.BaseActivity;
+import com.app.elisoft.guru.Activity.GameSinglePlayerActivity;
 import com.app.elisoft.guru.Activity.LeaderBoardActivity;
 import com.app.elisoft.guru.Activity.LoginActivity;
 import com.app.elisoft.guru.BroadcastReceiver.AlarmReceiver;
@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivity {
     private ImageView logoutButton;
     private ImageView refresh_button;
     private ImageView cup_button;
+    private ImageView com_Vs_Icon;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
@@ -145,10 +146,12 @@ public class MainActivity extends BaseActivity {
         logoutButton = (ImageView) findViewById(R.id.logout_button);
         refresh_button = (ImageView) findViewById(R.id.refresh_button);
         cup_button = (ImageView) findViewById(R.id.cup_button);
+        com_Vs_Icon = (ImageView) findViewById(R.id.vs_com_button);
 
         refresh_button.setOnClickListener(listenerRefresh);
         logoutButton.setOnClickListener(listenerLogout);
         cup_button.setOnClickListener(listenerCupButton);
+        com_Vs_Icon.setOnClickListener(computerVsClick);
 
         mAuth.addAuthStateListener(mAuthListener);
     }
@@ -217,6 +220,24 @@ public class MainActivity extends BaseActivity {
             myIntent.putExtra("top_three_list", topThree);
 
             startActivity(myIntent);
+        }
+    };
+
+    private View.OnClickListener computerVsClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+                User com = new User("123456789", "Mati Bot@gmail.com", "", 0, "a", "0", "0", "0");
+                Bundle bundle = new Bundle();
+
+                bundle.putSerializable("UserClient", com);
+                bundle.putSerializable("UserHost", currentUserLocal);
+
+                Intent startGame = new Intent(getApplicationContext(), GameSinglePlayerActivity.class);
+
+                startGame.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startGame.putExtra("bundleStartGame", bundle);
+                startActivity(startGame);
+
         }
     };
 
