@@ -1,20 +1,31 @@
 package com.app.elisoft.guru.TicTacToe;
 
 
-import android.content.ClipData;
-import android.widget.ImageView;
+import android.util.Log;
 
+import com.app.elisoft.guru.Table.User;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
+import static com.app.elisoft.guru.TicTacToe.Sign.O;
+import static com.app.elisoft.guru.TicTacToe.Sign.X;
 
 public class GameManager {
 
+    private static final String TAG = "GameManager";
     private static GameManager instance;
 
     private static final int GAME_SIZE = 3;
     private int moveNumber;
     Item[][] matrix;
+
+    User oppSeed, mySeed;
+
+    //array possibilities
+    int[] second_move_possibility = new int[]{1,3,7,9};
 
     public static GameManager getInstance(){
         if (instance == null)
@@ -40,13 +51,21 @@ public class GameManager {
         }
     }
 
+    public void setOppSeed(User oppSeed) {
+        this.oppSeed = oppSeed;
+    }
+
+    public void setMySeed(User mySeed) {
+        this.mySeed = mySeed;
+    }
+
     public int flipCoin(){
         Random r = new Random();
         int i1 = r.nextInt(2);
         return i1;
     }
 
-    public boolean chechWin(){
+    public boolean checkWin(){
         if (moveNumber<4) return false;
         else {
                  if ( matrix[0][0].getState() == matrix[0][1].getState() && matrix[0][1].getState() == matrix[0][2].getState() && (matrix[0][2].getState() == Sign.X || matrix[0][2].getState() == Sign.O)) return true;
@@ -61,12 +80,32 @@ public class GameManager {
         return false;
     }
 
+    public Sign getWinningSign(){
+        if      ( matrix[0][0].getState() == matrix[0][1].getState() && matrix[0][1].getState() == matrix[0][2].getState() && (matrix[0][2].getState() == Sign.X)) return X;
+        else if ( matrix[1][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[1][2].getState() && (matrix[1][2].getState() == Sign.X)) return X;
+        else if ( matrix[2][0].getState() == matrix[2][1].getState() && matrix[2][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.X)) return X;
+        else if ( matrix[0][0].getState() == matrix[1][0].getState() && matrix[1][0].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.X)) return X;
+        else if ( matrix[0][1].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][1].getState() && (matrix[2][1].getState() == Sign.X)) return X;
+        else if ( matrix[0][2].getState() == matrix[1][2].getState() && matrix[1][2].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.X)) return X;
+        else if ( matrix[0][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.X)) return X;
+        else if ( matrix[0][2].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.X)) return X;
+        else if ( matrix[0][0].getState() == matrix[0][1].getState() && matrix[0][1].getState() == matrix[0][2].getState() && (matrix[0][2].getState() == Sign.O)) return O;
+        else if ( matrix[1][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[1][2].getState() && (matrix[1][2].getState() == Sign.O)) return O;
+        else if ( matrix[2][0].getState() == matrix[2][1].getState() && matrix[2][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.O)) return O;
+        else if ( matrix[0][0].getState() == matrix[1][0].getState() && matrix[1][0].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.O)) return O;
+        else if ( matrix[0][1].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][1].getState() && (matrix[2][1].getState() == Sign.O)) return O;
+        else if ( matrix[0][2].getState() == matrix[1][2].getState() && matrix[1][2].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.O)) return O;
+        else if ( matrix[0][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.O)) return O;
+        else if ( matrix[0][2].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.O)) return O;
+        return EMPTY;
+    }
+
 
     public boolean canClick(int position) {
         for (int i = 0; i < GAME_SIZE; i++) {
             for (int j = 0; j < GAME_SIZE; j++) {
                 if (matrix[i][j].getPosition() == position) {
-                    return matrix[i][j].getState() == EMPTY && (moveNumber < GAME_SIZE*GAME_SIZE);
+                    return matrix[i][j].getState() == EMPTY && (moveNumber < GAME_SIZE * GAME_SIZE);
                 }
             }
         }
@@ -92,4 +131,186 @@ public class GameManager {
         return moveNumber;
     }
 
+    public boolean isCornerMove(){
+        boolean flag = false;
+        for (int i=0; i<GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                Sign itemSign= matrix[i][j].getState();
+                if (itemSign != EMPTY) {
+                    int movePosition = matrix[i][j].getPosition();
+                    if (movePosition == 1 || movePosition == 3 || movePosition == 7 || movePosition == 9) {
+                        flag = true;
+                    }
+                }
+
+            }
+        }
+        return flag;
+    }
+
+
+    public boolean isMiddleMove() {
+        if (matrix[1][1].getState() != EMPTY) return true;
+            else return false;
+    }
+
+    private List<Integer> generateMoves(Item[][] gameBoard) {
+        List<Integer> nextMoves = new ArrayList<>(); // allocate List
+
+        // If gameover, i.e., no next move
+        if (checkWin()) {
+            return nextMoves;   // return empty list
+        }
+
+        // Search for empty cells and add to the List
+        for (int row = 0; row < GAME_SIZE; ++row) {
+            for (int col = 0; col < GAME_SIZE; ++col) {
+                if (gameBoard[row][col].getState() == EMPTY) {
+                    nextMoves.add(gameBoard[row][col].getPosition());
+                }
+            }
+        }
+        return nextMoves;
+    }
+
+    public void printBoard(Item[][] gameBoard) {
+        String line = new String();
+        Log.d(TAG, "------------");
+        for (int i = 0; i < GAME_SIZE; i++) {
+
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (gameBoard[i][j].getState() == EMPTY) {
+                    line+=" # ";
+                } else if (gameBoard[i][j].getState() == X) {
+                    line+=" X ";
+                } else if (gameBoard[i][j].getState() == O) {
+                    line+=" O ";
+                }
+            }
+            Log.d(TAG, line);
+            line = "";
+        }
+        Log.d(TAG, "------------");
+    }
+
+    public Item[][] setMoveToBoard(Item[][] gameBoard, int position, Sign type){
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (gameBoard[i][j].getPosition() == position) {
+                    gameBoard[i][j].setState(type);
+                }
+            }
+        }
+        return gameBoard;
+    }
+
+    public int[] getXYFromPosition(int position) {
+        if (position == 1) return new int[]{0,0};
+        if (position == 2) return new int[]{0,1};
+        if (position == 3) return new int[]{0,2};
+        if (position == 4) return new int[]{1,0};
+        if (position == 5) return new int[]{1,1};
+        if (position == 6) return new int[]{1,2};
+        if (position == 7) return new int[]{2,0};
+        if (position == 8) return new int[]{2,1};
+        if (position == 9) return new int[]{2,2};
+        return new int[]{-1,-1};
+    }
+
+    private RecItem minimax(int depth, User player, Item[][] gameBoard) {
+        // Generate possible next moves in a List of int[2] of {row, col}.
+        List<Integer> nextMoves = generateMoves(gameBoard);
+        Log.d(TAG, "Possible moves for: " + player.getSign() + " | List: " + nextMoves.toString());
+        printBoard(gameBoard);
+        // mySeed is maximizing; while oppSeed is minimizing
+        int bestScore = (player == mySeed) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        RecItem currentScore;
+        RecItem bestMove = new RecItem(-1, -1);
+        Log.d(TAG, " depth = "+ depth);
+        if (nextMoves.isEmpty() || depth <= 0) {
+            // Gameover or depth reached, evaluate score
+//            if (moveNumber ==9 && !checkWin()) bestScore = 0;
+//                else bestScore = (getWinningSign() == mySeed.getSign()) ? 10 : -10;
+            if (moveNumber ==9 && !checkWin()) return new RecItem(-1, 0);
+            else return new RecItem(-1, (getWinningSign() == mySeed.getSign()) ? 10 : -10);
+        } else {
+            for (int move : nextMoves) {
+                if (player.getEmail().equals(mySeed.getEmail())) {  // mySeed (computer) is maximizing player
+                    currentScore = minimax(depth - 1, oppSeed, setMoveToBoard(gameBoard, move, player.getSign()));
+                    if (currentScore.score > bestMove.score) {
+                        bestMove = currentScore;
+                        bestMove.position = move;
+                    }
+                } else {  // oppSeed is minimizing player
+                    currentScore = minimax(depth - 1, mySeed, setMoveToBoard(gameBoard, move, player.getSign()));
+                    if (currentScore.score > bestMove.score) {
+                        bestMove = currentScore;
+                        bestMove.position = move;
+                    }
+                }
+                // Undo move
+//                cells[move[0]][move[1]].content = Seed.EMPTY;
+            }
+        }
+        return bestMove;
+    }
+
+
+    public int calMove(User playerTurn){
+        Item[][] gameBoard;
+        gameBoard = new Item[GAME_SIZE][GAME_SIZE];
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                gameBoard[i][j] = matrix[i][j];
+                }
+            }
+        RecItem positionBest = minimax(9 - moveNumber, playerTurn, gameBoard);
+        Log.d(TAG, "The best move is:" + positionBest.position + " score: " + positionBest.score);
+        return positionBest.position;
+
+
+//        if (moveNumber == 9) return new RecItem(playerTurn, playerSign, depth, 0);
+//        if (checkWin()) {
+//            if (getWinningSign() == playerSign) return new RecItem(playerTurn, playerSign, depth, 10);
+//            else  return new RecItem(playerTurn, playerSign, depth, -10);
+//        }
+//
+//        for (int i = 0; i < GAME_SIZE; i++) {
+//            for (int j = 0; j < GAME_SIZE; j++) {
+//                if (matrix[i][j].getPosition() == position) {
+//                    matrix[i][j].setState(type);
+//                }
+//            }
+//        }
+//        moveNumber++;
+//        calMove()
+
+
+    }
+
+    public class RecItem{
+        User player;
+        Sign playerSign;
+        int position;
+        int depth;
+        int score;
+
+        public RecItem(int position, int score) {
+            this.position = position;
+            this.score = score;
+        }
+
+        public RecItem(User player, Sign mSign, int depth, int score) {
+            this.player = player;
+            this.playerSign = mSign;
+            this.depth = depth;
+            this.score = score;
+        }
+        public void addScore(int mScore){
+            score = score + mScore;
+        }
+        public void setPositionMove(int mPosition) {
+            position = mPosition;
+        }
+    }
 }

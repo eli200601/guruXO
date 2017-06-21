@@ -1,18 +1,27 @@
 package com.app.elisoft.guru.Activity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Table.User;
 import com.app.elisoft.guru.TicTacToe.GameManager;
+import com.app.elisoft.guru.TicTacToe.Item;
 import com.app.elisoft.guru.TicTacToe.Sign;
+import com.app.elisoft.guru.Utils.Keys;
 import com.app.elisoft.guru.Views.CircleTransform;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.squareup.picasso.Picasso;
 
+import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
+import static com.app.elisoft.guru.TicTacToe.Sign.O;
 import static com.app.elisoft.guru.TicTacToe.Sign.X;
 
 /**
@@ -21,7 +30,11 @@ import static com.app.elisoft.guru.TicTacToe.Sign.X;
 
 public class GameSinglePlayerActivity extends BaseActivity {
 
-    private static final String TAG = "GameSinglePlayerActivity";
+    private static final String TAG = "GameSinglePlayer";
+
+    private static final int GAME_SIZE = 3;
+
+    Dialog dialog;
 
     User host_user, com_user, turn;
     Sign myPiece, comPiece;
@@ -61,6 +74,10 @@ public class GameSinglePlayerActivity extends BaseActivity {
         drawTurn();
         initGameBoardView();
         initGameUI();
+        if (turn.getEmail().equals(com_user.getEmail())){
+            // Now the com need to play
+            comMove();
+        }
 
 
     }
@@ -69,10 +86,16 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
         if (gameManager.flipCoin() == 0) {
             turn = host_user;
-        } else turn = com_user;
+        } else {
+            turn = com_user;
+        }
 
         myPiece = Sign.X;
         comPiece = Sign.O;
+        host_user.setSign(X);
+        com_user.setSign(O);
+        gameManager.setMySeed(host_user);
+        gameManager.setOppSeed(com_user);
 
     }
 
@@ -166,8 +189,159 @@ public class GameSinglePlayerActivity extends BaseActivity {
                 matrixView[i][j].setVisibility(View.VISIBLE);
                 matrixView[i][j].setImageResource(R.drawable.empty_icon);
                 //Todo: Click listener hare
+                matrixView[i][j].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int position = getPosition(view);
+                        Log.d(TAG, "I clicked on item: " + position);
+                        if (isMyTurn()) {
+                            Log.d(TAG, "Its my turn...");
+                            if (gameManager.canClick(position)) {
+                                Log.d(TAG, "The user click on empty tile");
+                                gameManager.setMove(position, myPiece);
+                                //update the new layout
+                                updateGameBoard();
+                                if (gameManager.checkWin()) {
+                                    //ToDo: there is a winner here :)
+                                    Log.d(TAG,"there is a winner here :)");
+
+                                    showGameResultDialog(Keys.GAME_WIN);
+                                    addPoints(host_user.getEmail());
+                                    updateGameRibbonScore();
+                                    turn = new User();
+                                }
+                                else
+                                {
+                                    if (gameManager.getMoveNumber() == 9 ) {
+                                        //ToDo: There is a draw here
+                                        Log.d(TAG,"There is a draw here");
+                                        showGameResultDialog(Keys.GAME_DRAW);
+                                        addPoints("draw");
+                                        updateGameRibbonScore();
+                                        turn = new User();
+                                    }
+                                    else
+                                    {
+                                        // just normal move...
+                                        Log.d(TAG,"just normal move...");
+                                        //ToDo: send move to other
+                                        changeTurn();
+                                    }
+                                }
+                                // Now the com need to play
+                                comMove();
+
+                            }
+
+                        }
+                        else {
+                            Log.d(TAG, "Its not my turn...");
+                        }
+
+                    }
+                });
+
             }
         }
+
+    }
+
+    private void comMove(){
+        Log.d(TAG,"Starting computer move - comMove()");
+        int move = gameManager.calMove(com_user);
+        gameManager.setMove(move, com_user.getSign());
+
+        changeTurn();
+        updateGameBoard();
+    }
+
+    private void addPoints(String to) {
+        if (to.equals("draw")) {
+            draws++;
+        } else {
+            if (to.equals(host_user.getEmail())) {
+                myScore++;
+            } else otherScore++;
+        }
+    }
+
+    public void changeTurn(){
+        turn = getOtherPlayer();
+        Log.d(TAG, "Turn change to " + turn.getEmail());
+        updateRibbonTurn();
+    }
+
+    public User getOtherPlayer(){
+        if (turn.getEmail().equals(host_user.getEmail())) return com_user;
+        else return host_user;
+    }
+
+    public void showGameResultDialog(String message) {
+        dialog = new Dialog(this, R.style.FullHeightDialog);
+
+        dialog.setContentView(R.layout.result_dialog);
+
+        ImageView dialogImage = (ImageView) dialog.findViewById(R.id.result_dialog);
+        Button dialogButton = (Button) dialog.findViewById(R.id.result_dialog_again);
+
+        if (message.equals(Keys.GAME_WIN)) {
+            dialogImage.setImageResource(R.drawable.win_icon);
+        } else if (message.equals(Keys.GAME_LOSE)) {
+            dialogImage.setImageResource(R.drawable.loser_icon);
+        } else if (message.equals(Keys.GAME_DRAW)) {
+            dialogImage.setImageResource(R.drawable.draw_icon);
+        }
+        YoYo.with(Techniques.BounceIn)
+                .duration(1000)
+                .playOn(dialogImage);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetRound();
+//                sendMessage(Keys.MESSAGE_NEW_GAME, turn.getEmail());
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public void resetRound() {
+        gameManager.initList();
+        updateGameBoard();
+        if (gameManager.flipCoin() == 0) {
+            turn = host_user;
+        } else turn = com_user;
+        Log.d(TAG, "Its turn: "+ turn.getEmail());
+        initGameUI();
+    }
+
+    public boolean isMyTurn(){
+        if (turn.getEmail().equals(host_user.getEmail())){
+            //Its my turn :)
+            return true;
+        } else return false;
+    }
+
+    public void updateGameBoard(){
+        Item[][] data = gameManager.getMatrix();
+
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (data[i][j].getState() == EMPTY) {
+                    matrixView[i][j].setImageResource(R.drawable.empty_icon);
+                } else {
+                    if (data[i][j].getState() == Sign.X) {
+                        matrixView[i][j].setImageResource(R.drawable.x_icon);
+
+                    } else {
+                        if (data[i][j].getState() == Sign.O) {
+                            matrixView[i][j].setImageResource(R.drawable.o_icon);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public int getPosition(View view){

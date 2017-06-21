@@ -1,6 +1,8 @@
 package com.app.elisoft.guru.Table;
 
 
+import com.app.elisoft.guru.TicTacToe.Sign;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -13,6 +15,9 @@ public class User implements Serializable {
     private String myWins;
     private String myLoses;
     private String myDraws;
+    private Sign sign;
+
+
 
     public void setMyDraws(String myDraws) {
         this.myDraws = myDraws;
@@ -65,6 +70,15 @@ public class User implements Serializable {
         this.myWins = myWins;
         this.myLoses = myLoses;
         this.myDraws = myDraws;
+    }
+
+    public Sign getSign() {
+        return sign;
+    }
+
+    public void setSign(Sign sign) {
+
+        this.sign = sign;
     }
 
     public String getMyWins() {

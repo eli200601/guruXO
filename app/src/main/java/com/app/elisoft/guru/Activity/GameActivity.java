@@ -287,7 +287,7 @@ public class GameActivity extends BaseActivity {
                                 gameManager.setMove(position, myPiece);
                                 //update the new layout
                                 updateGameBoard();
-                                if (gameManager.chechWin()) {
+                                if (gameManager.checkWin()) {
                                     //ToDo: there is a winner here :)
                                     Log.d(TAG,"there is a winner here :)");
 
