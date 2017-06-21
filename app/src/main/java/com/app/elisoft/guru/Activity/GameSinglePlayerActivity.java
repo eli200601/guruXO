@@ -226,10 +226,11 @@ public class GameSinglePlayerActivity extends BaseActivity {
                                         Log.d(TAG,"just normal move...");
                                         //ToDo: send move to other
                                         changeTurn();
+                                        comMove();
                                     }
                                 }
                                 // Now the com need to play
-                                comMove();
+
 
                             }
 
