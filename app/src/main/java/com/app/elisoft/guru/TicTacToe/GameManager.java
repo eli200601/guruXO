@@ -5,10 +5,7 @@ import android.util.Log;
 
 import com.app.elisoft.guru.Table.User;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -54,6 +51,29 @@ public class GameManager {
         }
     }
 
+    public void initTestList() {
+        moveNumber = 0;
+        matrix = new Item[GAME_SIZE][GAME_SIZE];
+        int position = 1;
+        for (int i=0; i<GAME_SIZE; i++){
+            for (int j=0; j<GAME_SIZE; j++){
+                Sign sign = EMPTY;
+                if (position==1) sign = X;
+                if (position==2) sign = O;
+                if (position==3) sign = X;
+                if (position==4) sign = O;
+                if (position==5) sign = O;
+                if (position==6) sign = EMPTY;
+                if (position==7) sign = EMPTY;
+                if (position==8) sign = X;
+                if (position==9) sign = EMPTY;
+                Item item = new Item(position, sign);
+                matrix[i][j] = item;
+                position++;
+            }
+        }
+    }
+
     public void setOppSeed(User oppSeed) {
         this.oppSeed = oppSeed;
     }
@@ -83,23 +103,37 @@ public class GameManager {
         return false;
     }
 
-    public Sign getWinningSign(){
-        if      ( matrix[0][0].getState() == matrix[0][1].getState() && matrix[0][1].getState() == matrix[0][2].getState() && (matrix[0][2].getState() == Sign.X)) return X;
-        else if ( matrix[1][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[1][2].getState() && (matrix[1][2].getState() == Sign.X)) return X;
-        else if ( matrix[2][0].getState() == matrix[2][1].getState() && matrix[2][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.X)) return X;
-        else if ( matrix[0][0].getState() == matrix[1][0].getState() && matrix[1][0].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.X)) return X;
-        else if ( matrix[0][1].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][1].getState() && (matrix[2][1].getState() == Sign.X)) return X;
-        else if ( matrix[0][2].getState() == matrix[1][2].getState() && matrix[1][2].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.X)) return X;
-        else if ( matrix[0][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.X)) return X;
-        else if ( matrix[0][2].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.X)) return X;
-        else if ( matrix[0][0].getState() == matrix[0][1].getState() && matrix[0][1].getState() == matrix[0][2].getState() && (matrix[0][2].getState() == Sign.O)) return O;
-        else if ( matrix[1][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[1][2].getState() && (matrix[1][2].getState() == Sign.O)) return O;
-        else if ( matrix[2][0].getState() == matrix[2][1].getState() && matrix[2][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.O)) return O;
-        else if ( matrix[0][0].getState() == matrix[1][0].getState() && matrix[1][0].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.O)) return O;
-        else if ( matrix[0][1].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][1].getState() && (matrix[2][1].getState() == Sign.O)) return O;
-        else if ( matrix[0][2].getState() == matrix[1][2].getState() && matrix[1][2].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.O)) return O;
-        else if ( matrix[0][0].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][2].getState() && (matrix[2][2].getState() == Sign.O)) return O;
-        else if ( matrix[0][2].getState() == matrix[1][1].getState() && matrix[1][1].getState() == matrix[2][0].getState() && (matrix[2][0].getState() == Sign.O)) return O;
+    public boolean checkWinInBoard(Item[][] gameBoard){
+
+             if ( gameBoard[0][0].getState() == gameBoard[0][1].getState() && gameBoard[0][1].getState() == gameBoard[0][2].getState() && (gameBoard[0][2].getState() == Sign.X || gameBoard[0][2].getState() == Sign.O)) return true;
+        else if ( gameBoard[1][0].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[1][2].getState() && (gameBoard[1][2].getState() == Sign.X || gameBoard[1][2].getState() == Sign.O)) return true;
+        else if ( gameBoard[2][0].getState() == gameBoard[2][1].getState() && gameBoard[2][1].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.X || gameBoard[2][2].getState() == Sign.O)) return true;
+        else if ( gameBoard[0][0].getState() == gameBoard[1][0].getState() && gameBoard[1][0].getState() == gameBoard[2][0].getState() && (gameBoard[2][0].getState() == Sign.X || gameBoard[2][0].getState() == Sign.O)) return true;
+        else if ( gameBoard[0][1].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][1].getState() && (gameBoard[2][1].getState() == Sign.X || gameBoard[2][1].getState() == Sign.O)) return true;
+        else if ( gameBoard[0][2].getState() == gameBoard[1][2].getState() && gameBoard[1][2].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.X || gameBoard[2][2].getState() == Sign.O)) return true;
+        else if ( gameBoard[0][0].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.X || gameBoard[2][2].getState() == Sign.O)) return true;
+        else if ( gameBoard[0][2].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][0].getState() && (gameBoard[2][0].getState() == Sign.X || gameBoard[2][0].getState() == Sign.O)) return true;
+
+        return false;
+    }
+
+    public Sign getWinningSign(Item[][] gameBoard){
+        if      ( gameBoard[0][0].getState() == gameBoard[0][1].getState() && gameBoard[0][1].getState() == gameBoard[0][2].getState() && (gameBoard[0][2].getState() == Sign.X)) return X;
+        else if ( gameBoard[1][0].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[1][2].getState() && (gameBoard[1][2].getState() == Sign.X)) return X;
+        else if ( gameBoard[2][0].getState() == gameBoard[2][1].getState() && gameBoard[2][1].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.X)) return X;
+        else if ( gameBoard[0][0].getState() == gameBoard[1][0].getState() && gameBoard[1][0].getState() == gameBoard[2][0].getState() && (gameBoard[2][0].getState() == Sign.X)) return X;
+        else if ( gameBoard[0][1].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][1].getState() && (gameBoard[2][1].getState() == Sign.X)) return X;
+        else if ( gameBoard[0][2].getState() == gameBoard[1][2].getState() && gameBoard[1][2].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.X)) return X;
+        else if ( gameBoard[0][0].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.X)) return X;
+        else if ( gameBoard[0][2].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][0].getState() && (gameBoard[2][0].getState() == Sign.X)) return X;
+        else if ( gameBoard[0][0].getState() == gameBoard[0][1].getState() && gameBoard[0][1].getState() == gameBoard[0][2].getState() && (gameBoard[0][2].getState() == Sign.O)) return O;
+        else if ( gameBoard[1][0].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[1][2].getState() && (gameBoard[1][2].getState() == Sign.O)) return O;
+        else if ( gameBoard[2][0].getState() == gameBoard[2][1].getState() && gameBoard[2][1].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.O)) return O;
+        else if ( gameBoard[0][0].getState() == gameBoard[1][0].getState() && gameBoard[1][0].getState() == gameBoard[2][0].getState() && (gameBoard[2][0].getState() == Sign.O)) return O;
+        else if ( gameBoard[0][1].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][1].getState() && (gameBoard[2][1].getState() == Sign.O)) return O;
+        else if ( gameBoard[0][2].getState() == gameBoard[1][2].getState() && gameBoard[1][2].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.O)) return O;
+        else if ( gameBoard[0][0].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][2].getState() && (gameBoard[2][2].getState() == Sign.O)) return O;
+        else if ( gameBoard[0][2].getState() == gameBoard[1][1].getState() && gameBoard[1][1].getState() == gameBoard[2][0].getState() && (gameBoard[2][0].getState() == Sign.O)) return O;
         return EMPTY;
     }
 
@@ -197,8 +231,8 @@ public class GameManager {
     }
 
     public Item[][] setMoveToBoard(Item[][] gameBoard, int position, Sign type){
-        Log.d(TAG, "=== Matrix ===");
-        printBoard(matrix);
+//        Log.d(TAG, "=== Matrix ===");
+//        printBoard(matrix);
         for (int i = 0; i < GAME_SIZE; i++) {
             for (int j = 0; j < GAME_SIZE; j++) {
                 if (gameBoard[i][j].getPosition() == position) {
@@ -206,10 +240,26 @@ public class GameManager {
                 }
             }
         }
-        Log.d(TAG, "=== Matrix ===");
-        printBoard(matrix);
+//        Log.d(TAG, "=== Matrix ===");
+//        printBoard(matrix);
         return gameBoard;
     }
+
+    public Item[][] undoMoveToBoard(Item[][] gameBoard, int position){
+//        Log.d(TAG, "=== Matrix ===");
+//        printBoard(matrix);
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (gameBoard[i][j].getPosition() == position) {
+                    gameBoard[i][j].setState(EMPTY);
+                }
+            }
+        }
+//        Log.d(TAG, "=== Matrix ===");
+//        printBoard(matrix);
+        return gameBoard;
+    }
+
 
     public int[] getXYFromPosition(int position) {
         if (position == 1) return new int[]{0,0};
@@ -226,42 +276,79 @@ public class GameManager {
 
     private RecItem minimax(int depth, User player, Item[][] gameBoard) {
         // Generate possible next moves in a List of int[2] of {row, col}.
-        Log.d(TAG, "=== gameBoard ===");
-        printBoard(gameBoard);
+//        Log.d(TAG, "=== gameBoard ===");
+//        printBoard(gameBoard);
         List<Integer> nextMoves = generateMoves(gameBoard);
-        Log.d(TAG, "Possible moves for: " + player.getSign() + " | List: " + nextMoves.toString());
+//        Log.d(TAG, "Possible moves for: " + player.getSign() + " | List: " + nextMoves.toString());
         printBoard(gameBoard);
         // mySeed is maximizing; while oppSeed is minimizing
-        int bestScore = (player == mySeed) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        RecItem currentScore;
-        RecItem bestMove = new RecItem(-1, -1);
-        Log.d(TAG, " depth = "+ depth);
-        Log.d(TAG, "=== Matrix ===");
-        printBoard(matrix);
+//        int bestScore;
+//                = (player == mySeed) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        RecItem currentScore =  new RecItem(0, 0);
+        ArrayList<RecItem> moveList = new ArrayList<>();
+        RecItem bestMove = new RecItem(0, Integer.MIN_VALUE);
+//        Log.d(TAG, " depth = "+ depth);
+//        Log.d(TAG, "=== Matrix ===");
+//        printBoard(matrix);
 
-        if (nextMoves.isEmpty() || depth <= 0) {
-            // Gameover or depth reached, evaluate score
-//            if (moveNumber ==9 && !checkWin()) bestScore = 0;
-//                else bestScore = (getWinningSign() == mySeed.getSign()) ? 10 : -10;
-            if (depth == 0 && !checkWin()) return new RecItem(-1, 0);
-            else return new RecItem(-1, (getWinningSign() == mySeed.getSign()) ? 10 : -10);
+//        if (nextMoves.isEmpty() || depth <= 0) {
+//            // Gameover or depth reached, evaluate score
+////            if (moveNumber ==9 && !checkWin()) bestScore = 0;
+////                else bestScore = (getWinningSign() == mySeed.getSign()) ? 10 : -10;
+//            if (depth == 0 && !checkWin()) return new RecItem(0, 0);
+//            else return new RecItem(0, (getWinningSign() == oppSeed.getSign()) ? 10 : -10);
+//        }
+        if (checkWinInBoard(gameBoard)) {
+            Sign winSign = getWinningSign(gameBoard);
+            if (winSign == oppSeed.getSign()) return new RecItem(0, 10);
+            else return new RecItem(0, -10);
         } else {
-            for (int move : nextMoves) {
-                if (player.getEmail().equals(mySeed.getEmail())) {  // mySeed (computer) is maximizing player
-                    currentScore = minimax(depth - 1, oppSeed, setMoveToBoard(gameBoard, move, player.getSign()));
-                    if (currentScore.score > bestMove.score) {
-                        bestMove = currentScore;
-                        bestMove.position = move;
+            if (depth == 0) {
+                return new RecItem(0, 0);
+            } else {
+                for (int move : nextMoves) {
+                    if (player.getEmail().equals(mySeed.getEmail())) {
+                        currentScore.score += minimax(depth - 1, oppSeed, setMoveToBoard(gameBoard, move, player.getSign())).score;
+                        undoMoveToBoard(gameBoard, move);
+                    } else {
+                        currentScore.score += minimax(depth - 1, mySeed, setMoveToBoard(gameBoard, move, player.getSign())).score;
+                        undoMoveToBoard(gameBoard, move);
                     }
-                } else {  // oppSeed is minimizing player
-                    currentScore = minimax(depth - 1, mySeed, setMoveToBoard(gameBoard, move, player.getSign()));
-                    if (currentScore.score < bestMove.score) {
-                        bestMove = currentScore;
-                        bestMove.position = move;
-                    }
+                    currentScore.position = move;
+                    Log.d(TAG, "Adding to list: " + currentScore.position + " score: " + currentScore.score);
+                    moveList.add(currentScore);
+                    printBoard(gameBoard);
+
+                    //                if (player.getEmail().equals(mySeed.getEmail())) {  // mySeed (computer) is maximizing player
+                    //                    currentScore = minimax(depth - 1, oppSeed, setMoveToBoard(gameBoard, move, player.getSign()));
+                    //                    if (currentScore.score > bestMove.score) {
+                    //                        bestMove = currentScore;
+                    //                        bestMove.position = move;
+                    //
+                    //                    }
+                    //                } else {  // oppSeed is minimizing player
+                    //                    currentScore = minimax(depth - 1, mySeed, setMoveToBoard(gameBoard, move, player.getSign()));
+                    //                    if (currentScore.score < bestMove.score) {
+                    //                        bestMove = currentScore;
+                    //                        bestMove.position = move;
+                    //                    }
+                    //                }
+                    // Undo move
+                    //                cells[move[0]][move[1]].content = Seed.EMPTY;
                 }
-                // Undo move
-//                cells[move[0]][move[1]].content = Seed.EMPTY;
+//                Log.d(TAG, "Getting the best score ===");
+//                RecItem temp = new RecItem(0, -3000);
+
+//                Log.d(TAG, "Best Move - move" + bestMove.position + " score: " + bestMove.score);
+//                bestMove.position = temp.position;
+//                bestMove.score = temp.score;
+            }
+        }
+        for (RecItem rec : moveList) {
+//            Log.d(TAG, "move: " + rec.position + " score: " + rec.score);
+            if (rec.score > bestMove.score) {
+                bestMove.score = rec.score;
+                bestMove.position = rec.position;
             }
         }
         return bestMove;
@@ -270,13 +357,15 @@ public class GameManager {
 
     public int calMove(User playerTurn){
         Item[][] gameBoard;
-//        gameBoard = new Item[GAME_SIZE][GAME_SIZE];
-        gameBoard = Arrays.copyOf(matrix, matrix.length);
-//        for (int i = 0; i < GAME_SIZE; i++) {
-//            for (int j = 0; j < GAME_SIZE; j++) {
-//                gameBoard[i][j] = matrix[i][j];
-//                }
-//            }
+        Item item;
+        gameBoard = new Item[GAME_SIZE][GAME_SIZE];
+//        gameBoard = Arrays.copyOf(matrix, matrix.length);
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                item = new Item(matrix[i][j].position, matrix[i][j].state);
+                gameBoard[i][j] = item;
+                }
+            }
 
         Log.d(TAG, "=== Matrix ===");
         printBoard(matrix);
@@ -285,7 +374,7 @@ public class GameManager {
         RecItem positionBest = minimax(9 - moveNumber, playerTurn, gameBoard);
         Log.d(TAG, "The best move is:" + positionBest.position + " score: " + positionBest.score);
 //        return positionBest.position;
-        return 1;
+        return positionBest.position;
 
 //        if (moveNumber == 9) return new RecItem(playerTurn, playerSign, depth, 0);
 //        if (checkWin()) {

@@ -61,6 +61,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
         gameManager = GameManager.getInstance();
         gameManager.initList();
+//        gameManager.initTestList();
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("bundleStartGame");
@@ -78,6 +79,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
             // Now the com need to play
             comMove();
         }
+        updateGameBoard();
 
 
     }
