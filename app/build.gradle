@@ -16,8 +16,8 @@ android {
         applicationId "com.app.elisoft.guru"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 23
-        versionName "2.13"
+        versionCode 25
+        versionName "2.15"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
