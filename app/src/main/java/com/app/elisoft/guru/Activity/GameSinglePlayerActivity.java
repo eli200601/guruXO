@@ -254,8 +254,28 @@ public class GameSinglePlayerActivity extends BaseActivity {
         int move = gameManager.calMove(com_user);
         gameManager.setMove(move, com_user.getSign());
 
-        changeTurn();
-        updateGameBoard();
+        if (gameManager.checkWin()) {
+            //ToDo: there is a winner here :)
+            updateGameRibbonScore();
+            showGameResultDialog(Keys.GAME_LOSE);
+            addPoints(host_user.getEmail());
+
+            turn = new User();
+        } else {
+            if (gameManager.getMoveNumber() == 9) {
+                //ToDo: There is a draw here
+                Log.d(TAG,"There is a draw here");
+                updateGameRibbonScore();
+                showGameResultDialog(Keys.GAME_DRAW);
+                addPoints("draw");
+                turn = new User();
+            } else {
+                Log.d(TAG,"just normal move...");
+                changeTurn();
+                updateGameBoard();
+            }
+        }
+
     }
 
     private void addPoints(String to) {
@@ -316,6 +336,11 @@ public class GameSinglePlayerActivity extends BaseActivity {
         } else turn = com_user;
         Log.d(TAG, "Its turn: "+ turn.getEmail());
         initGameUI();
+
+        if (turn.getEmail().equals(com_user.getEmail())){
+            // Now the com need to play
+            comMove();
+        }
     }
 
     public boolean isMyTurn(){
@@ -327,7 +352,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
     public void updateGameBoard(){
         Item[][] data = gameManager.getMatrix();
-
+        Log.d(TAG, " --- Updating to game board ---");
         for (int i = 0; i < GAME_SIZE; i++) {
             for (int j = 0; j < GAME_SIZE; j++) {
                 if (data[i][j].getState() == EMPTY) {
