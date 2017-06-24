@@ -498,11 +498,15 @@ public class MainActivity extends BaseActivity {
                 //                When Clicking on item in list
                 Log.d(TAG, "User clicked on " + position);
 
+
+
                 Bundle bundle = new Bundle();
 
                 bundle.putSerializable("UserClient", usersList.get(position));
                 bundle.putSerializable("UserHost", currentUserLocal);
 
+
+                // Its simple user
                 Intent dialogActivity = new Intent(this, InviteDialog.class);
                 dialogActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -515,6 +519,9 @@ public class MainActivity extends BaseActivity {
 
                 dialogActivity.putExtra("bundleUser", bundle);
                 startActivity(dialogActivity, options.toBundle());
+
+
+
 
 
             }

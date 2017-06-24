@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.elisoft.guru.Activity.GameActivity;
+import com.app.elisoft.guru.Activity.GameSinglePlayerActivity;
 import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.R;
 import com.app.elisoft.guru.Services.SendMessageToDevice;
@@ -57,7 +59,7 @@ public class InviteDialog extends AppCompatActivity {
     private RelativeLayout spinner_container;
     private SpinnerLoading spinner;
 
-
+    private static int TIME_OUT = 5000; //Time to launch th
 
     TextView title;
 
@@ -226,40 +228,31 @@ public class InviteDialog extends AppCompatActivity {
 
         cancel_button.setOnClickListener(cancelClick);
 
-        sendRequestMessage();
+        if (client_user.getUid().equals("123456")) {
+            // Its the bot
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Bundle bundle = new Bundle();
 
-//        setEnterSharedElementCallback(new SharedElementCallback() {
-//            @Override
-//            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-//                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
-//                Log.d(TAG, "onSharedElementEnd");
-//                YoYo.with(Techniques.BounceInRight)
-//                        .duration(1000)
-//                        .repeat(1)
-//                        .withListener(new Animator.AnimatorListener() {
-//                    @Override
-//                    public void onAnimationStart(Animator animator) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onAnimationEnd(Animator animator) {
-//                        Log.d(TAG, "Item onAnimationEnd");
-//                    }
-//
-//                    @Override
-//                    public void onAnimationCancel(Animator animator) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onAnimationRepeat(Animator animator) {
-//
-//                    }
-//                })
-//                        .playOn(client_user_icon);
-//            }
-//        });
+                    bundle.putSerializable("UserClient", client_user);
+                    bundle.putSerializable("UserHost", host_user);
+
+                    Intent startGame = new Intent(getApplicationContext(), GameSinglePlayerActivity.class);
+
+                    startGame.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startGame.putExtra("bundleStartGame", bundle);
+
+                    startActivity(startGame);
+                    finish();
+                }
+            }, TIME_OUT);
+        } else {
+            // Its a normal user
+            sendRequestMessage();
+        }
+
+
     }
 
     public void loadClientIcon(){

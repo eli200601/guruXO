@@ -18,7 +18,11 @@ import com.app.elisoft.guru.Utils.Keys;
 import com.app.elisoft.guru.Views.CircleTransform;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
 import static com.app.elisoft.guru.TicTacToe.Sign.O;
@@ -49,6 +53,10 @@ public class GameSinglePlayerActivity extends BaseActivity {
     ImageView com_icon, host_user_icon, com_sign, host_sign;
     TextView com_name_text, host_user_text;
     TextView turnTitle, score_com, score_host, score_draw;
+
+    private EventBus eventBus = EventBus.getDefault();
+
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     public GameSinglePlayerActivity() {
     }
@@ -258,7 +266,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
             //ToDo: there is a winner here :)
             updateGameRibbonScore();
             showGameResultDialog(Keys.GAME_LOSE);
-            addPoints(host_user.getEmail());
+            addPoints(com_user.getEmail());
 
             turn = new User();
         } else {
@@ -407,4 +415,47 @@ public class GameSinglePlayerActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateUserPoints();
+    }
+
+    public void updateUserPoints() {
+        Log.d(TAG, "Sending user progress");
+        int myWins, myLoses, myDraws , comWins, comLosses, comDrawes;
+        Log.d(TAG, "previous wins: " + host_user.getMyWins());
+
+        if (myScore+otherScore+draws > 0) {
+            // Update user progress
+            if (host_user.getMyWins() == null ) myWins = myScore;
+            else myWins = Integer.valueOf(host_user.getMyWins()) + myScore;
+
+            Log.d(TAG, "previous Loses: " + host_user.getMyLoses());
+            if (host_user.getMyLoses() == null ) myLoses = otherScore;
+            else myLoses = Integer.valueOf(host_user.getMyLoses()) + otherScore;
+
+            Log.d(TAG, "previous Draws: " + host_user.getMyDraws());
+            if (host_user.getMyDraws() == null ) myDraws = draws;
+            else myDraws = Integer.valueOf(host_user.getMyDraws()) + draws;
+
+            // Update com progress
+            if (com_user.getMyWins() == null) comWins = otherScore;
+            else comWins = Integer.valueOf(com_user.getMyWins()) + otherScore;
+
+            if (com_user.getMyLoses() == null) comLosses = myScore;
+            else comLosses = Integer.valueOf(com_user.getMyLoses()) + myScore;
+
+            if (com_user.getMyDraws() == null) comDrawes = draws;
+            else comDrawes = Integer.valueOf(com_user.getMyDraws()) + draws;
+
+            mDatabase.child("users").child(host_user.getUid()).child("myWins").setValue(String.valueOf(myWins));
+            mDatabase.child("users").child(host_user.getUid()).child("myLoses").setValue(String.valueOf(myLoses));
+            mDatabase.child("users").child(host_user.getUid()).child("myDraws").setValue(String.valueOf(myDraws));
+
+            mDatabase.child("users").child(com_user.getUid()).child("myWins").setValue(String.valueOf(comWins));
+            mDatabase.child("users").child(com_user.getUid()).child("myLoses").setValue(String.valueOf(comLosses));
+            mDatabase.child("users").child(com_user.getUid()).child("myDraws").setValue(String.valueOf(comDrawes));
+        }
+    }
 }
