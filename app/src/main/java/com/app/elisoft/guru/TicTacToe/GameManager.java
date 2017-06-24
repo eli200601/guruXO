@@ -284,9 +284,9 @@ public class GameManager {
         // mySeed is maximizing; while oppSeed is minimizing
 //        int bestScore;
 //                = (player == mySeed) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        RecItem currentScore =  new RecItem(0, 0);
+
         ArrayList<RecItem> moveList = new ArrayList<>();
-        RecItem bestMove = new RecItem(0, Integer.MIN_VALUE);
+
 //        Log.d(TAG, " depth = "+ depth);
 //        Log.d(TAG, "=== Matrix ===");
 //        printBoard(matrix);
@@ -307,6 +307,7 @@ public class GameManager {
                 return new RecItem(0, 0);
             } else {
                 for (int move : nextMoves) {
+                    RecItem currentScore =  new RecItem(0, 0);
                     if (player.getEmail().equals(mySeed.getEmail())) {
                         currentScore.score += minimax(depth - 1, oppSeed, setMoveToBoard(gameBoard, move, player.getSign())).score;
                         undoMoveToBoard(gameBoard, move);
@@ -344,15 +345,35 @@ public class GameManager {
 //                bestMove.score = temp.score;
             }
         }
-        for (RecItem rec : moveList) {
+        RecItem bestMove;
+
+        if (player.getEmail().equals(oppSeed.getEmail())) {
+            bestMove = new RecItem(0, Integer.MIN_VALUE);
+            for (RecItem rec : moveList) {
 //            Log.d(TAG, "move: " + rec.position + " score: " + rec.score);
-            if (rec.score > bestMove.score) {
-                bestMove.score = rec.score;
-                bestMove.position = rec.position;
+                if (rec.score > bestMove.score) {
+                    bestMove.score = rec.score;
+                    bestMove.position = rec.position;
+                }
+            }
+        } else {
+            // getting min score
+            bestMove = new RecItem(0, Integer.MAX_VALUE);
+            for (RecItem rec : moveList) {
+//            Log.d(TAG, "move: " + rec.position + " score: " + rec.score);
+                if (rec.score < bestMove.score) {
+                    bestMove.score = rec.score;
+                    bestMove.position = rec.position;
+                }
             }
         }
+
+        Log.d(TAG, "move: " + bestMove.position + " score: " + bestMove.score);
         return bestMove;
     }
+
+
+
 
 
     public int calMove(User playerTurn){
@@ -371,7 +392,18 @@ public class GameManager {
         printBoard(matrix);
         Log.d(TAG, "=== gameBoard ===");
         printBoard(gameBoard);
-        RecItem positionBest = minimax(9 - moveNumber, playerTurn, gameBoard);
+
+        RecItem positionBest;
+        if (moveNumber == 0) {
+            positionBest = firstMoveCPU();
+        } else {
+            if (moveNumber == 1) {
+                positionBest = secondMoveCPU();
+            } else {
+                positionBest = minimax(9 - moveNumber, playerTurn, gameBoard);
+            }
+        }
+
         Log.d(TAG, "The best move is:" + positionBest.position + " score: " + positionBest.score);
 //        return positionBest.position;
         return positionBest.position;
@@ -393,6 +425,42 @@ public class GameManager {
 //        calMove()
 
 
+    }
+
+    public RecItem firstMoveCPU(){
+        int[] options = new int[]{1, 3, 7, 9};
+        Random r = new Random();
+        int i1 = r.nextInt(4);
+        return new RecItem(options[i1], 10);
+    }
+
+    public RecItem secondMoveCPU(){
+        int pos = getFistMovePosition();
+        if (pos == 5) {
+            int[] options = new int[]{1, 3, 7, 9};
+            Random r = new Random();
+            int i1 = r.nextInt(4);
+            return new RecItem(options[i1], 10);
+        } else {
+            if (pos == 1 || pos == 3 || pos == 7 | pos == 9) {
+                return new RecItem(5, 10);
+            } else {
+                if (pos == 2 || pos == 4 || pos == 6 | pos == 8) {
+                    return new RecItem(5, 10);
+                }
+            }
+        }
+        return new RecItem(5, 10);
+    }
+
+    public int getFistMovePosition(){
+        int pos = 0;
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (matrix[i][j].getState() != EMPTY) pos = matrix[i][j].position;
+                }
+            }
+        return pos;
     }
 
     public class RecItem{
