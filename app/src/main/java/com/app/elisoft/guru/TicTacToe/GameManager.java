@@ -276,28 +276,12 @@ public class GameManager {
 
     private RecItem minimax(int depth, User player, Item[][] gameBoard) {
         // Generate possible next moves in a List of int[2] of {row, col}.
-//        Log.d(TAG, "=== gameBoard ===");
-//        printBoard(gameBoard);
         List<Integer> nextMoves = generateMoves(gameBoard);
-//        Log.d(TAG, "Possible moves for: " + player.getSign() + " | List: " + nextMoves.toString());
+
         printBoard(gameBoard);
-        // mySeed is maximizing; while oppSeed is minimizing
-//        int bestScore;
-//                = (player == mySeed) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
         ArrayList<RecItem> moveList = new ArrayList<>();
 
-//        Log.d(TAG, " depth = "+ depth);
-//        Log.d(TAG, "=== Matrix ===");
-//        printBoard(matrix);
-
-//        if (nextMoves.isEmpty() || depth <= 0) {
-//            // Gameover or depth reached, evaluate score
-////            if (moveNumber ==9 && !checkWin()) bestScore = 0;
-////                else bestScore = (getWinningSign() == mySeed.getSign()) ? 10 : -10;
-//            if (depth == 0 && !checkWin()) return new RecItem(0, 0);
-//            else return new RecItem(0, (getWinningSign() == oppSeed.getSign()) ? 10 : -10);
-//        }
         if (checkWinInBoard(gameBoard)) {
             Sign winSign = getWinningSign(gameBoard);
             if (winSign == oppSeed.getSign()) return new RecItem(0, 10);
@@ -319,30 +303,7 @@ public class GameManager {
                     Log.d(TAG, "Adding to list: " + currentScore.position + " score: " + currentScore.score);
                     moveList.add(currentScore);
                     printBoard(gameBoard);
-
-                    //                if (player.getEmail().equals(mySeed.getEmail())) {  // mySeed (computer) is maximizing player
-                    //                    currentScore = minimax(depth - 1, oppSeed, setMoveToBoard(gameBoard, move, player.getSign()));
-                    //                    if (currentScore.score > bestMove.score) {
-                    //                        bestMove = currentScore;
-                    //                        bestMove.position = move;
-                    //
-                    //                    }
-                    //                } else {  // oppSeed is minimizing player
-                    //                    currentScore = minimax(depth - 1, mySeed, setMoveToBoard(gameBoard, move, player.getSign()));
-                    //                    if (currentScore.score < bestMove.score) {
-                    //                        bestMove = currentScore;
-                    //                        bestMove.position = move;
-                    //                    }
-                    //                }
-                    // Undo move
-                    //                cells[move[0]][move[1]].content = Seed.EMPTY;
                 }
-//                Log.d(TAG, "Getting the best score ===");
-//                RecItem temp = new RecItem(0, -3000);
-
-//                Log.d(TAG, "Best Move - move" + bestMove.position + " score: " + bestMove.score);
-//                bestMove.position = temp.position;
-//                bestMove.score = temp.score;
             }
         }
         RecItem bestMove;
@@ -380,7 +341,7 @@ public class GameManager {
         Item[][] gameBoard;
         Item item;
         gameBoard = new Item[GAME_SIZE][GAME_SIZE];
-//        gameBoard = Arrays.copyOf(matrix, matrix.length);
+
         for (int i = 0; i < GAME_SIZE; i++) {
             for (int j = 0; j < GAME_SIZE; j++) {
                 item = new Item(matrix[i][j].position, matrix[i][j].state);
@@ -388,10 +349,10 @@ public class GameManager {
                 }
             }
 
-        Log.d(TAG, "=== Matrix ===");
-        printBoard(matrix);
-        Log.d(TAG, "=== gameBoard ===");
-        printBoard(gameBoard);
+//        Log.d(TAG, "=== Matrix ===");
+//        printBoard(matrix);
+//        Log.d(TAG, "=== gameBoard ===");
+//        printBoard(gameBoard);
 
         RecItem positionBest;
         if (moveNumber == 0) {
@@ -405,25 +366,9 @@ public class GameManager {
         }
 
         Log.d(TAG, "The best move is:" + positionBest.position + " score: " + positionBest.score);
-//        return positionBest.position;
+
+
         return positionBest.position;
-
-//        if (moveNumber == 9) return new RecItem(playerTurn, playerSign, depth, 0);
-//        if (checkWin()) {
-//            if (getWinningSign() == playerSign) return new RecItem(playerTurn, playerSign, depth, 10);
-//            else  return new RecItem(playerTurn, playerSign, depth, -10);
-//        }
-//
-//        for (int i = 0; i < GAME_SIZE; i++) {
-//            for (int j = 0; j < GAME_SIZE; j++) {
-//                if (matrix[i][j].getPosition() == position) {
-//                    matrix[i][j].setState(type);
-//                }
-//            }
-//        }
-//        moveNumber++;
-//        calMove()
-
 
     }
 

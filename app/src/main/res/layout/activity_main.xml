@@ -76,7 +76,8 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/pc_icon_vs" />
+                    android:src="@drawable/pc_icon_vs"
+                    android:visibility="gone"/>
             </FrameLayout>
 
             <FrameLayout

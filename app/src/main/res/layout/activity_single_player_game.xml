@@ -110,6 +110,24 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="80dp"
+            android:layout_marginBottom="20dp">
+            <!--android:layout_below="@+id/anim_container"-->
+            <!--android:layout_toLeftOf="@+id/score_con"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--android:layout_marginTop="5dp"-->
+                <com.ldoublem.loadingviewlib.LVCircularZoom
+                    android:id="@+id/lv_circular"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    />
+        </RelativeLayout>
+
+
         <LinearLayout
             android:id="@+id/score_con"
             android:layout_width="wrap_content"

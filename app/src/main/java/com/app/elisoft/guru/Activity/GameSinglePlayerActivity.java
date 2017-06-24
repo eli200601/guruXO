@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.elisoft.guru.EventBus.MessageEvent;
 import com.app.elisoft.guru.R;
+import com.app.elisoft.guru.Services.GetBestMove;
+import com.app.elisoft.guru.Services.SendMessageToDevice;
 import com.app.elisoft.guru.Table.User;
 import com.app.elisoft.guru.TicTacToe.GameManager;
 import com.app.elisoft.guru.TicTacToe.Item;
@@ -20,9 +23,13 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.ldoublem.loadingviewlib.LVCircularZoom;
 import com.squareup.picasso.Picasso;
 
+
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static com.app.elisoft.guru.TicTacToe.Sign.EMPTY;
 import static com.app.elisoft.guru.TicTacToe.Sign.O;
@@ -58,6 +65,8 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
+    LVCircularZoom mLVCircularZoom;
+
     public GameSinglePlayerActivity() {
     }
 
@@ -83,7 +92,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
         drawTurn();
         initGameBoardView();
         initGameUI();
-        if (turn.getEmail().equals(com_user.getEmail())){
+        if (turn.getEmail().equals(com_user.getEmail())) {
             // Now the com need to play
             comMove();
         }
@@ -109,7 +118,10 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
     }
 
-    public void initGameUI(){
+    public void initGameUI() {
+        mLVCircularZoom = (LVCircularZoom) findViewById(R.id.lv_circular);
+//        mLVCircularZoom.startAnim();
+
 
         com_sign = (ImageView) findViewById(R.id.game_com_sign_icon);
         host_sign = (ImageView) findViewById(R.id.game_host_sign_icon);
@@ -144,7 +156,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
                 .into(host_user_icon);
 
         //Setting up signs
-        if (myPiece.equals(X)){
+        if (myPiece.equals(X)) {
             com_sign.setImageResource(R.drawable.o_icon);
             host_sign.setImageResource(R.drawable.x_icon);
         } else {
@@ -169,7 +181,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
         updateRibbonTurn();
     }
 
-    public void updateGameRibbonScore(){
+    public void updateGameRibbonScore() {
         String drawString;
         drawString = " Draw's: " + String.valueOf(draws);
         score_com.setText(String.valueOf(otherScore));
@@ -177,7 +189,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
         score_draw.setText(drawString);
     }
 
-    public void updateRibbonTurn(){
+    public void updateRibbonTurn() {
         String turnS = "It's " + turn.getEmail().split("@")[0] + " turn";
         turnTitle.setText(turnS);
     }
@@ -194,7 +206,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
         matrixView[2][1] = (ImageView) findViewById(R.id.eight);
         matrixView[2][2] = (ImageView) findViewById(R.id.nine);
 
-        for(int i =0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 matrixView[i][j].setVisibility(View.VISIBLE);
                 matrixView[i][j].setImageResource(R.drawable.empty_icon);
@@ -213,27 +225,23 @@ public class GameSinglePlayerActivity extends BaseActivity {
                                 updateGameBoard();
                                 if (gameManager.checkWin()) {
                                     //ToDo: there is a winner here :)
-                                    Log.d(TAG,"there is a winner here :)");
+                                    Log.d(TAG, "there is a winner here :)");
 
                                     showGameResultDialog(Keys.GAME_WIN);
                                     addPoints(host_user.getEmail());
                                     updateGameRibbonScore();
                                     turn = new User();
-                                }
-                                else
-                                {
-                                    if (gameManager.getMoveNumber() == 9 ) {
+                                } else {
+                                    if (gameManager.getMoveNumber() == 9) {
                                         //ToDo: There is a draw here
-                                        Log.d(TAG,"There is a draw here");
+                                        Log.d(TAG, "There is a draw here");
                                         showGameResultDialog(Keys.GAME_DRAW);
                                         addPoints("draw");
                                         updateGameRibbonScore();
                                         turn = new User();
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         // just normal move...
-                                        Log.d(TAG,"just normal move...");
+                                        Log.d(TAG, "just normal move...");
                                         //ToDo: send move to other
                                         changeTurn();
                                         comMove();
@@ -244,8 +252,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
                             }
 
-                        }
-                        else {
+                        } else {
                             Log.d(TAG, "Its not my turn...");
                         }
 
@@ -257,32 +264,19 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
     }
 
-    private void comMove(){
-        Log.d(TAG,"Starting computer move - comMove()");
-        int move = gameManager.calMove(com_user);
-        gameManager.setMove(move, com_user.getSign());
+    private void comMove() {
+        Log.d(TAG, "Starting computer move - comMove()");
+        mLVCircularZoom.startAnim();
+        Intent intentNew = new Intent(GameSinglePlayerActivity.this, GetBestMove.class);
 
-        if (gameManager.checkWin()) {
-            //ToDo: there is a winner here :)
-            updateGameRibbonScore();
-            showGameResultDialog(Keys.GAME_LOSE);
-            addPoints(com_user.getEmail());
+        Bundle bundle = new Bundle();
 
-            turn = new User();
-        } else {
-            if (gameManager.getMoveNumber() == 9) {
-                //ToDo: There is a draw here
-                Log.d(TAG,"There is a draw here");
-                updateGameRibbonScore();
-                showGameResultDialog(Keys.GAME_DRAW);
-                addPoints("draw");
-                turn = new User();
-            } else {
-                Log.d(TAG,"just normal move...");
-                changeTurn();
-                updateGameBoard();
-            }
-        }
+        bundle.putSerializable("Player", com_user);
+        intentNew.putExtra("bundleStartGame", bundle);
+
+        intentNew.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        startService(intentNew);
+
 
     }
 
@@ -296,13 +290,13 @@ public class GameSinglePlayerActivity extends BaseActivity {
         }
     }
 
-    public void changeTurn(){
+    public void changeTurn() {
         turn = getOtherPlayer();
         Log.d(TAG, "Turn change to " + turn.getEmail());
         updateRibbonTurn();
     }
 
-    public User getOtherPlayer(){
+    public User getOtherPlayer() {
         if (turn.getEmail().equals(host_user.getEmail())) return com_user;
         else return host_user;
     }
@@ -342,23 +336,23 @@ public class GameSinglePlayerActivity extends BaseActivity {
         if (gameManager.flipCoin() == 0) {
             turn = host_user;
         } else turn = com_user;
-        Log.d(TAG, "Its turn: "+ turn.getEmail());
+        Log.d(TAG, "Its turn: " + turn.getEmail());
         initGameUI();
 
-        if (turn.getEmail().equals(com_user.getEmail())){
+        if (turn.getEmail().equals(com_user.getEmail())) {
             // Now the com need to play
             comMove();
         }
     }
 
-    public boolean isMyTurn(){
-        if (turn.getEmail().equals(host_user.getEmail())){
+    public boolean isMyTurn() {
+        if (turn.getEmail().equals(host_user.getEmail())) {
             //Its my turn :)
             return true;
         } else return false;
     }
 
-    public void updateGameBoard(){
+    public void updateGameBoard() {
         Item[][] data = gameManager.getMatrix();
         Log.d(TAG, " --- Updating to game board ---");
         for (int i = 0; i < GAME_SIZE; i++) {
@@ -380,7 +374,7 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
     }
 
-    public int getPosition(View view){
+    public int getPosition(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.one: {
@@ -416,6 +410,18 @@ public class GameSinglePlayerActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        eventBus.register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        eventBus.unregister(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         updateUserPoints();
@@ -423,20 +429,20 @@ public class GameSinglePlayerActivity extends BaseActivity {
 
     public void updateUserPoints() {
         Log.d(TAG, "Sending user progress");
-        int myWins, myLoses, myDraws , comWins, comLosses, comDrawes;
+        int myWins, myLoses, myDraws, comWins, comLosses, comDrawes;
         Log.d(TAG, "previous wins: " + host_user.getMyWins());
 
-        if (myScore+otherScore+draws > 0) {
+        if (myScore + otherScore + draws > 0) {
             // Update user progress
-            if (host_user.getMyWins() == null ) myWins = myScore;
+            if (host_user.getMyWins() == null) myWins = myScore;
             else myWins = Integer.valueOf(host_user.getMyWins()) + myScore;
 
             Log.d(TAG, "previous Loses: " + host_user.getMyLoses());
-            if (host_user.getMyLoses() == null ) myLoses = otherScore;
+            if (host_user.getMyLoses() == null) myLoses = otherScore;
             else myLoses = Integer.valueOf(host_user.getMyLoses()) + otherScore;
 
             Log.d(TAG, "previous Draws: " + host_user.getMyDraws());
-            if (host_user.getMyDraws() == null ) myDraws = draws;
+            if (host_user.getMyDraws() == null) myDraws = draws;
             else myDraws = Integer.valueOf(host_user.getMyDraws()) + draws;
 
             // Update com progress
@@ -458,4 +464,40 @@ public class GameSinglePlayerActivity extends BaseActivity {
             mDatabase.child("users").child(com_user.getUid()).child("myDraws").setValue(String.valueOf(comDrawes));
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessageEvent messageEvent) {
+        Log.d(TAG, "message sender: " + messageEvent.getSender());
+        if (messageEvent instanceof MessageEvent.OnFindingBestMove) {
+            mLVCircularZoom.stopAnim();
+            Log.d(TAG, "Found Best Move" + ((MessageEvent.OnFindingBestMove) messageEvent).getPosition());
+            int move = ((MessageEvent.OnFindingBestMove) messageEvent).getPosition();
+
+            gameManager.setMove(move, com_user.getSign());
+            updateGameBoard();
+            if (gameManager.checkWin()) {
+                //ToDo: there is a winner here :)
+                updateGameRibbonScore();
+                showGameResultDialog(Keys.GAME_LOSE);
+                addPoints(com_user.getEmail());
+
+                turn = new User();
+            } else {
+                if (gameManager.getMoveNumber() == 9) {
+                    //ToDo: There is a draw here
+                    Log.d(TAG, "There is a draw here");
+                    updateGameRibbonScore();
+                    showGameResultDialog(Keys.GAME_DRAW);
+                    addPoints("draw");
+                    turn = new User();
+                } else {
+                    Log.d(TAG, "just normal move...");
+                    changeTurn();
+
+                }
+            }
+
+        }
+    }
+
 }

@@ -93,6 +93,12 @@
             android:enabled="true"/>
 
         <service
+            android:name="com.app.elisoft.guru.Services.GetBestMove"
+            android:exported="false"
+            android:label="Intent"
+            android:enabled="true"/>
+
+        <service
             android:name="com.app.elisoft.guru.Services.FBMessagingReceiverService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

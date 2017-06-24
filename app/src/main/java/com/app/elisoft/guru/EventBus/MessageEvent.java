@@ -129,5 +129,15 @@ public class MessageEvent {
         }
     }
 
+    /*--------------------------------- Single Game Events ---------------------------------*/
 
+    public static class OnFindingBestMove extends MessageEvent {
+        int pos;
+        public OnFindingBestMove(int pos) {
+            this.pos = pos;
+        }
+        public int getPosition() {
+            return pos;
+        }
+    }
 }
